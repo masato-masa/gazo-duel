@@ -145,3 +145,9 @@ button:disabled { opacity: .4; }
 .dialog button:active { transform: translateY(2px); }
 .curtain { background: #1b1230; }
 .win .dialog h2 { margin: 0; font-size: 28px; color: #ffd86b; text-shadow: 0 0 16px #ffb400; }
+
+.ghostbtn { display: block; width: 100%; margin-top: 10px; padding: 12px; border-radius: 12px; border: 1.5px solid #6b53c4; background: transparent; color: #e6dcff; font-size: 15px; font-weight: 700; }
+.howto { text-align: left; max-height: 86dvh; overflow-y: auto; }
+.howto h3 { text-align: center; font-size: 18px; }
+.howto ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; display: grid; gap: 6px; }
+.howto li b { color: #ffd86b; }

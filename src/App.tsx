@@ -14,6 +14,26 @@ type Seat = { name: string; kind: 'images' | 'random' | 'cpu'; files: File[] };
 
 const DECK = 10;
 
+
+function HowTo({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="modal" onClick={onClose}>
+      <div className="dialog howto" onClick={(e) => e.stopPropagation()}>
+        <h3>あそびかた</h3>
+        <ul>
+          <li><b>勝ち：</b>相手の LP（4000）を 0 にする。山札が引けなくなった人は負け。</li>
+          <li><b>はじめ：</b>手札 3 枚。毎ターン 1 枚引く（先攻の最初のターンは引かず、攻撃もできない）。</li>
+          <li><b>モンスター：</b>手札を選んで場のマスをタップして出す（1 ターン 1 枚）。場に 3 枚まで。出したとき、カードの能力が発動する。</li>
+          <li><b>攻撃：</b>出したカードをタップして、相手のカードをタップ。戦闘力が高い方が勝ち、差ぶんのダメージが負けた側の LP に入る。同じなら両方壊れる。相手の場が空なら「直接攻撃」。</li>
+          <li><b>罠：</b>手札から下の伏せマスへ（1 ターン 1 枚）。相手には中身が見えない。きっかけが起きたら自動で発動する。</li>
+          <li><b>お酒：</b>能力の条件に「お酒を飲んでもよい」「じゃんけん」「早口」などが付くカードがある。出た問いに答えて、結果のボタンを押す。飲む量は自己責任で。</li>
+        </ul>
+        <button type="button" onClick={onClose}>とじる</button>
+      </div>
+    </div>
+  );
+}
+
 function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
   const [seats, setSeats] = useState<[Seat, Seat]>([
     { name: 'プレイヤー1', kind: 'images', files: [] },
@@ -22,6 +42,7 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
   const set = (i: 0 | 1, patch: Partial<Seat>) =>
     setSeats((s) => (i === 0 ? [{ ...s[0], ...patch }, s[1]] : [s[0], { ...s[1], ...patch }]));
   const ready = seats.every((s) => s.kind !== 'images' || s.files.length === DECK);
+  const [how, setHow] = useState(false);
 
   return (
     <div className="setup">
@@ -55,6 +76,8 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
       <button type="button" className="big" disabled={!ready} onClick={() => onStart(seats)}>
         はじめる
       </button>
+      <button type="button" className="ghostbtn" onClick={() => setHow(true)}>あそびかた</button>
+      {how && <HowTo onClose={() => setHow(false)} />}
       {!ready && <p className="note">画像を選ぶ人は、ちょうど 10 枚が要ります。</p>}
     </div>
   );
@@ -122,6 +145,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
   const [look, setLook] = useState<Card | null>(null);
   const [curtain, setCurtain] = useState(!vsCpu);
   const [muted, setMutedState] = useState(isMuted());
+  const [how, setHow] = useState(false);
   const lastTurn = useRef<P>(s.turn);
   const me: P = vsCpu ? 0 : s.turn;
   const you: P = me === 0 ? 1 : 0;
@@ -234,6 +258,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
             <button type="button" className="atk" onClick={() => { act((st) => attack(st, sel.i, 'direct')); setSel(null); }}>直接攻撃！</button>
           )}
           <button type="button" disabled={!myTurn || s.prompts.length > 0 || s.winner !== null} onClick={() => { act(endTurn); setSel(null); setLook(null); }}>ターン終了</button>
+           <button type="button" className="mute" aria-label="あそびかた" onClick={() => setHow(true)}>？</button>
           <button type="button" className="mute" aria-label="音" onClick={() => { setMuted(!muted); setMutedState(!muted); }}>{muted ? '🔇' : '🔊'}</button>
         </div>
       </div>
@@ -284,6 +309,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
         ))}
       </div>
 
+      {how && <HowTo onClose={() => setHow(false)} />}
       {fx.flash && <div key={fx.flash.key} className={`flash ${fx.flash.tone} ${fx.flash.p === me ? 'bottom' : 'top'}`} />}
       {fx.banner && (
         <div key={fx.banner.key} className="banner">
