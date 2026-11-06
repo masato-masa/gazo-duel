@@ -20,7 +20,7 @@ button:disabled { opacity: .4; }
 
 /* ---- 対戦の画面 ---- */
 .duel { height: 100dvh; display: flex; flex-direction: column; padding: 6px 8px; gap: 5px; max-width: 560px; margin: 0 auto; position: relative; overflow: hidden;
-  background: radial-gradient(120% 60% at 50% 0%, #3a2670 0%, transparent 60%), radial-gradient(120% 60% at 50% 100%, #2a1d5c 0%, transparent 60%); }
+  background: linear-gradient(#0b051888, #0b051855), url('./assets/table.webp') center / cover no-repeat, #1b1230; }
 .duel.shake { animation: shake .45s; }
 @keyframes shake { 0%,100% { transform: none; } 15% { transform: translate(-7px, 3px); } 30% { transform: translate(6px, -4px); } 45% { transform: translate(-5px, -2px); } 60% { transform: translate(4px, 3px); } 80% { transform: translate(-2px, 1px); } }
 
@@ -45,9 +45,9 @@ button:disabled { opacity: .4; }
 .trapslot.ringed::after { content: ''; position: absolute; inset: 0; border-radius: 7px; box-shadow: 0 0 0 0 #c79bff; animation: ripple .8s ease-out; }
 @keyframes ripple { from { box-shadow: 0 0 0 0 #c79bffcc; } to { box-shadow: 0 0 0 14px #c79bff00; } }
 @keyframes pulse { 50% { background: #c79bff44; } }
-.trapback { position: absolute; inset: 0; display: grid; place-content: center; font-size: 11px; font-weight: 700; color: #e6d4ff;
-  background: repeating-linear-gradient(45deg, #5a2f9a 0 6px, #4a2480 6px 12px); border: 1.5px solid #b98cff; border-radius: 6px; padding: 0 3px; text-align: center; overflow: hidden; }
-.trapback.mine { background: repeating-linear-gradient(45deg, #5a2f9a 0 6px, #4a2480 6px 12px); font-size: 9px; }
+.trapback { position: absolute; inset: 0; display: grid; background: url('./assets/trap-back.webp') center / cover; place-content: center; font-size: 11px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px #000;
+  border: 1.5px solid #b98cff; border-radius: 6px; padding: 0 3px; text-align: center; overflow: hidden; }
+.trapback.mine { font-size: 9px; text-shadow: 0 1px 3px #000, 0 0 6px #000; }
 
 .field { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr; gap: 6px; flex: 1 1 0; min-height: 0; }
 .slot { border: 2px dashed #4a3a8066; border-radius: 12px; min-width: 0; min-height: 0; position: relative; background: #ffffff06; }
@@ -96,10 +96,10 @@ button:disabled { opacity: .4; }
 
 /* ---- 中央・ボタン ---- */
 .mid { display: flex; gap: 8px; align-items: center; justify-content: space-between; min-height: 44px; flex: none; }
-.hint { font-size: 13px; font-weight: 800; color: #ffd86b; display: flex; flex-direction: column; line-height: 1.25; }
+.hint { flex: 1; min-width: 0; font-size: 13px; font-weight: 800; color: #ffd86b; display: flex; flex-direction: column; line-height: 1.25; }
 .hint small { font-weight: 500; color: #d8ccff; font-size: 11px; }
 .btns { display: flex; gap: 6px; align-items: center; }
-.btns button { padding: 8px 12px; border-radius: 10px; border: 0; background: linear-gradient(#7d63dd, #5a43b5); color: #fff; font-weight: 800; box-shadow: 0 3px 0 #33237a; }
+.btns button { white-space: nowrap; padding: 8px 12px; border-radius: 10px; border: 0; background: linear-gradient(#7d63dd, #5a43b5); color: #fff; font-weight: 800; box-shadow: 0 3px 0 #33237a; }
 .btns button:active { transform: translateY(2px); box-shadow: 0 1px 0 #33237a; }
 .btns .atk { background: linear-gradient(#ff6a5c, #cc2a1c); box-shadow: 0 3px 0 #7a130b; animation: pulse3 .8s infinite; }
 @keyframes pulse3 { 50% { transform: scale(1.06); } }
