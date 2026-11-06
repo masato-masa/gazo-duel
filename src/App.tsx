@@ -5,12 +5,13 @@ import { answerPrompt, attack, canAttack, canSetTrap, canSummon, endTurn, newGam
 import { fieldCards } from './game/ops';
 import type { Card, P, State } from './game/types';
 import { embedImage, loadClip } from './clip';
+import { listDecks, removeDeck, saveDeck, thumbnail, type SavedDeck } from './deckStore';
 import { Art, FieldCard, FullCard, TrapBack } from './ui/CardView';
 import { isMuted, setMuted, sfx } from './ui/sound';
 import { useFx } from './ui/useFx';
 import './App.css';
 
-type Seat = { name: string; kind: 'images' | 'random' | 'cpu'; files: File[] };
+type Seat = { name: string; kind: 'images' | 'random' | 'cpu' | 'saved'; files: File[]; savedId?: string };
 
 const DECK = 10;
 
@@ -41,8 +42,9 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
   ]);
   const set = (i: 0 | 1, patch: Partial<Seat>) =>
     setSeats((s) => (i === 0 ? [{ ...s[0], ...patch }, s[1]] : [s[0], { ...s[1], ...patch }]));
-  const ready = seats.every((s) => s.kind !== 'images' || s.files.length === DECK);
+  const ready = seats.every((s) => (s.kind !== 'images' || s.files.length === DECK) && (s.kind !== 'saved' || !!s.savedId));
   const [how, setHow] = useState(false);
+  const [saved, setSaved] = useState<SavedDeck[]>(() => listDecks());
 
   return (
     <div className="setup">
@@ -56,6 +58,11 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
             <label>
               <input type="radio" checked={seats[i].kind === 'images'} onChange={() => set(i, { kind: 'images' })} /> 画像 10 枚
             </label>
+            {saved.length > 0 && (
+              <label>
+                <input type="radio" checked={seats[i].kind === 'saved'} onChange={() => set(i, { kind: 'saved', savedId: saved[0]!.id })} /> 前のデッキ
+              </label>
+            )}
             <label>
               <input type="radio" checked={seats[i].kind === 'random'} onChange={() => set(i, { kind: 'random' })} /> お試し（画像なし）
             </label>
@@ -65,6 +72,16 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
               </label>
             )}
           </div>
+          {seats[i].kind === 'saved' && (
+            <div className="savedrow">
+              <select value={seats[i].savedId} onChange={(e) => set(i, { savedId: e.target.value })}>
+                {saved.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+              <button type="button" className="ghostbtn small" onClick={() => { removeDeck(seats[i].savedId!); const l = listDecks(); setSaved(l); set(i, l.length ? { savedId: l[0]!.id } : { kind: 'images', savedId: undefined }); }}>消す</button>
+            </div>
+          )}
           {seats[i].kind === 'images' && (
             <label className="file">
               画像を選ぶ（{seats[i].files.length} / {DECK}）
@@ -94,12 +111,24 @@ function Loading({ text, ratio }: { text: string; ratio: number }) {
 }
 
 async function buildDeck(seat: Seat, k: number, seed: number, onStep: (done: number) => void): Promise<Card[]> {
+  if (seat.kind === 'saved') {
+    const d = listDecks().find((x) => x.id === seat.savedId);
+    if (d) return d.cards.map((c, i) => ({ ...c, id: `${k}-${i}` }));
+  }
   if (seat.kind !== 'images') return Array.from({ length: DECK }, (_, i) => randomCard(seed * 31 + k * 97 + i, `${k}-${i}`));
   const cards: Card[] = [];
   for (let i = 0; i < seat.files.length; i++) {
     const url = URL.createObjectURL(seat.files[i]);
     cards.push(cardFromEmbedding(await embedImage(url), url, `${k}-${i}`));
     onStep(i + 1);
+  }
+  // 次からすぐ使えるよう、サムネイルつきで保存する（画像の原本は保存しない）
+  try {
+    const thumbs = await Promise.all(cards.map((c) => thumbnail(c.img)));
+    const d = new Date();
+    saveDeck(`${seat.name}（${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}）`, cards.map((c, i) => ({ ...c, img: thumbs[i]! })));
+  } catch {
+    /* 保存できなくても対戦はできる */
   }
   return cards;
 }

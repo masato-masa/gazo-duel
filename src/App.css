@@ -151,3 +151,7 @@ button:disabled { opacity: .4; }
 .howto h3 { text-align: center; font-size: 18px; }
 .howto ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; display: grid; gap: 6px; }
 .howto li b { color: #ffd86b; }
+
+.savedrow { display: flex; gap: 8px; align-items: center; }
+.savedrow select { flex: 1; min-width: 0; font-size: 15px; padding: 9px 8px; border-radius: 8px; border: 0; background: #3b2c66; color: #fff; }
+.ghostbtn.small { width: auto; margin: 0; padding: 8px 12px; font-size: 13px; }
