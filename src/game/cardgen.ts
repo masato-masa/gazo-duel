@@ -1,6 +1,7 @@
 import data from '../data/words.json';
-import { CARD_PARTS, effectText } from './effects';
-import type { Card, Effect } from './types';
+import { abilityText, ACTIONS, NONE_UNIT_CONDS } from './abilities';
+import { CORES_FOR, trapText } from './traps';
+import type { Ability, Card, CondKind, Scale, TrapTrigger } from './types';
 
 export interface Word {
   en: string;
@@ -64,63 +65,90 @@ function mulberry(seed: number): () => number {
   };
 }
 
-/** 言葉の意味から素直に決める効果。ここに無い言葉は、言葉の綴りから決まる */
-const MEANING: Record<string, string> = {};
-const assign = (part: string, words: string) => words.split(',').forEach((w) => (MEANING[w] = part));
-assign('heal', 'apple,banana,orange fruit,strawberry,grapes,watermelon,lemon,peach,cherry,pineapple,carrot,tomato,bread,rice,sushi,salad,soup,curry,sandwich,tofu,honey,cake,egg,cheese,pill,bandage,heart,angel,milk,tea,water bottle,juice')
-assign('damage', 'sword,knife,axe,spear,bow and arrow,gun,dagger,hammer,cannon,bomb,saw,needle,scissors,syringe,fire,flame,lightning,explosion,battle,war,anger,tiger,lion,wolf,shark,crocodile,dragon')
-assign('seal', 'shield,armor,helmet,lock,chain,rope,door')
-assign('drinkFoe', 'beer,wine,whiskey,sake,cocktail,champagne,soda,bar,party,festival,hangover,drunk')
-assign('drinkAll', 'wedding,birthday,christmas,friends,family')
-assign('draw', 'book,notebook,map,telescope,letter,envelope,library,school,teacher,student')
-assign('selfUp', 'muscle,boxing,power,gorilla,bear,elephant,tractor,truck,king,knight,soldier')
-assign('poison', 'poison,spider,snake,mushroom,rotten,smelly,cockroach')
-assign('regen', 'sleepy,nap,bed,pillow,blanket,cozy,bathtub,garden,forest,tree')
-assign('silence', 'silence,quiet,boredom,monday,deadline,meeting,exam,homework,overtime work')
-assign('swapLp', 'mirror,chaos,weird,strange')
-assign('returnSelf', 'boomerang,bicycle,ring,compass')
+function weighted<T>(rnd: () => number, items: [T, number][]): T {
+  const total = items.reduce((a, [, w]) => a + w, 0);
+  let r = rnd() * total;
+  for (const [v, w] of items) {
+    r -= w;
+    if (r < 0) return v;
+  }
+  return items[items.length - 1][0];
+}
 
-/** LP・戦闘力にかかる効果の大きさの倍率（CPU 同士 600 戦で、試合の長さを見て決めた） */
+/** 言葉の意味から素直に決める動作。ここに無い言葉は、言葉の綴りから決まる */
+const MEANING: Record<string, string> = {};
+const assign = (action: string, words: string) => words.split(',').forEach((w) => (MEANING[w] = action));
+assign('heal', 'apple,banana,orange fruit,strawberry,grapes,watermelon,lemon,peach,cherry,pineapple,carrot,tomato,bread,rice,sushi,salad,soup,curry,sandwich,tofu,honey,cake,egg,cheese,pill,bandage,heart,angel,milk,tea,water bottle,juice');
+assign('damage', 'sword,knife,axe,spear,bow and arrow,gun,dagger,hammer,cannon,bomb,saw,needle,scissors,syringe,fire,flame,lightning,explosion,battle,war,anger,tiger,lion,wolf,shark,crocodile,dragon');
+assign('seal', 'shield,armor,helmet,lock,chain,rope,door');
+assign('drinkFoe', 'beer,wine,whiskey,sake,cocktail,champagne,soda,bar,party,festival,hangover,drunk');
+assign('draw', 'book,notebook,map,telescope,letter,envelope,library,school,teacher,student');
+assign('powerUp', 'muscle,boxing,power,gorilla,bear,elephant,tractor,truck,king,knight,soldier');
+assign('poison', 'poison,spider,snake,mushroom,rotten,smelly,cockroach');
+assign('regen', 'sleepy,nap,bed,pillow,blanket,cozy,bathtub,garden,forest,tree');
+assign('discard', 'silence,quiet,boredom,monday,deadline,meeting,exam,homework,overtime work');
+assign('swapLp', 'mirror,chaos,weird,strange');
+
+/** 向きが反転しやすい（自分に返る・相手が得する）言葉 */
+const UNLUCKY = new Set(['embarrassment', 'regret', 'monday', 'deadline', 'overtime work', 'hangover', 'boredom', 'rotten', 'cursed', 'curse', 'trap', 'clown', 'zombie', 'ghost']);
+
+/** LP・戦闘力にかかる効果の大きさの倍率（CPU 同士の対戦で、試合の長さを見て決めた） */
 const EFFECT_SCALE = 0.7;
 
-function partIndexFor(en: string): number {
-  const m = MEANING[en];
-  if (m) return CARD_PARTS.findIndex((p) => p.id === m);
-  return hashStr(en) % CARD_PARTS.length;
+const TRAP_BONUS = ['heal', 'damage', 'draw', 'drinkFoe', 'powerDown', 'discard'];
+
+function rollAbility(rnd: () => number, w1: Word, w2: Word, allowed?: string[]): Ability {
+  const pool = allowed ? ACTIONS.filter((a) => allowed.includes(a.id)) : ACTIONS;
+  const mapped = MEANING[w1.en];
+  const act = (mapped && pool.find((a) => a.id === mapped)) || pool[hashStr(w1.en) % pool.length];
+  const [min, max, step] = act.range;
+  let n = min + step * Math.floor(rnd() * ((max - min) / step + 1));
+  if (act.unit === 'lp') n = Math.max(min, Math.round((n * EFFECT_SCALE) / 100) * 100);
+
+  const flip = UNLUCKY.has(w2.en) || rnd() < 0.15;
+
+  let scale: Scale = 'flat';
+  let per = 0;
+  if (act.unit === 'lp') {
+    scale = weighted<Scale>(rnd, [['flat', 32], ['perHand', 15], ['perField', 12], ['perGrave', 8], ['perDrunk', 8], ['perTurn', 8], ['dice', 10], ['lpGap', 7]]);
+    per = scale === 'perDrunk' ? 200 : 100;
+  }
+
+  const condPool: [CondKind, number][] = [
+    ['none', 34], ['sake', 20], ['rps', 8], ['name', 8], ['shame', 6], ['praise', 5], ['imitate', 5], ['coin', 8], ['parity', 6],
+  ];
+  const conds = act.unit === 'none' ? condPool.filter(([c]) => NONE_UNIT_CONDS.includes(c)) : condPool;
+  const cond = weighted(rnd, conds);
+  const condN = act.unit === 'count' ? 1 : [100, 200, 300][Math.floor(rnd() * 3)];
+  return { action: act.id, n: act.unit === 'none' ? 0 : n, flip, scale, per, cond, condN };
 }
 
 /**
- * 近い言葉 3 つから、名前・効果・戦闘力を決める。
+ * 近い言葉 3 つから、カード 1 枚を決める。能力は 1 つ（動作 × 向き × 数値の出し方 × 条件）。
  * 名前は「修飾の形 → 名詞」の順（禁断の赤いリンゴ）。いちばん近い名詞を末尾に置く。
  */
 export function buildCard(top: number[], seed: number, img: string, id: string): Card {
   const rnd = mulberry(seed);
   const ws = top.map((i) => WORDS[i]);
   const isAdj = (w: Word) => w.mod !== `${w.noun}の` && w.mod.length > 0;
-  // 末尾の名詞: 近い順で最初の「形容でない言葉」。無ければ最も近い言葉
   const head = ws.find((w) => !isAdj(w)) ?? ws[0];
   const rest = ws.filter((w) => w !== head).reverse();
   const name = rest.map((w) => w.mod).join('') + head.noun;
+  const hue = Math.floor(rnd() * 360);
+  const isTrap = rnd() < 0.3;
+  const words = ws.map((w) => w.en);
 
-  // 効果: 3 語それぞれから 1 つ。同じ部品はずらして重ねない
-  const used = new Set<number>();
-  const effects: Effect[] = ws.map((w) => {
-    let idx = partIndexFor(w.en);
-    while (used.has(idx)) idx = (idx + 1) % CARD_PARTS.length;
-    used.add(idx);
-    const part = CARD_PARTS[idx];
-    const [min, max, step] = part.range;
-    let n = min + step * Math.floor(rnd() * ((max - min) / step + 1));
-    // 数値の大きい効果（LP・戦闘力）は、試合が短くなりすぎないよう控えめにする
-    if (step >= 100) n = Math.max(min, Math.round((n * EFFECT_SCALE) / 100) * 100);
-    return { part: part.id, n };
-  });
-
-  // 戦闘力: 0〜4800。低い方に寄せて、たまに強いカードが出る
-  const u = rnd();
-  const power = Math.round(u ** 1.4 * 20) * 100;
-
-  return { id, name, power, base: power, effects, img, words: ws.map((w) => w.en) };
+  if (!isTrap) {
+    const ability = rollAbility(rnd, ws[0], ws[1]);
+    // 戦闘力: 0〜2000。低い方に寄せて、たまに強いカードが出る
+    const power = Math.round(rnd() ** 1.4 * 20) * 100;
+    return { id, kind: 'monster', name, power, base: power, ability, trap: null, img, words, hue };
+  }
+  const trigger = weighted<TrapTrigger>(rnd, [['attack', 30], ['direct', 14], ['summon', 22], ['hurt', 20], ['low', 14]]);
+  const cores = CORES_FOR[trigger];
+  const core = cores[hashStr(ws[0].en) % cores.length];
+  const ability = rnd() < 0.85 ? rollAbility(rnd, ws[1], ws[2], TRAP_BONUS) : null;
+  return { id, kind: 'trap', name, power: 0, base: 0, ability, trap: { trigger, core }, img, words, hue };
 }
 
 export function cardFromEmbedding(emb: ArrayLike<number>, img: string, id: string): Card {
@@ -135,5 +163,10 @@ export function randomCard(seed: number, id: string): Card {
 }
 
 export function cardEffectText(c: Card): string {
-  return c.effects.map(effectText).join('。') + '。';
+  if (c.kind === 'trap') return trapText(c);
+  return c.ability ? `【出したとき】${abilityText(c.ability)}` : '';
 }
+
+const NOUN = new Map(WORDS.map((w) => [w.en, w.noun]));
+/** 英語の言葉の日本語（名詞の形）。絵に大きく載せる */
+export const nounOf = (en: string): string => NOUN.get(en) ?? en;

@@ -1,6 +1,7 @@
-import { runEffect } from './effects';
-import { checkWin, damage, destroyAt, draw, fieldCards, foe, heal, log, rand, sendToGrave } from './ops';
-import { SLOTS, START_HAND, START_LP, type Card, type P, type State } from './types';
+import { answer, fire } from './abilities';
+import { checkWin, damage, destroyAt, draw, emit, fieldCards, foe, heal, log, rand } from './ops';
+import { fireTrap } from './traps';
+import { SLOTS, START_HAND, START_LP, TRAP_SLOTS, type Card, type P, type State } from './types';
 
 export interface DeckInput {
   name: string;
@@ -22,11 +23,13 @@ export function newGame(decks: [DeckInput, DeckInput], seed: number): State {
     deck: [[], []],
     hand: [[], []],
     field: [Array(SLOTS).fill(null), Array(SLOTS).fill(null)],
+    traps: [Array(TRAP_SLOTS).fill(null), Array(TRAP_SLOTS).fill(null)],
     grave: [[], []],
     turn: 0,
     turnNo: 0,
     summonsLeft: 0,
     summonCount: 0,
+    trapSetsLeft: 0,
     attacked: [],
     sealed: [],
     immortal: [],
@@ -36,12 +39,21 @@ export function newGame(decks: [DeckInput, DeckInput], seed: number): State {
     drinks: [0, 0],
     log: [],
     prompts: [],
+    events: [],
+    eventSeq: 0,
+    inTrap: false,
     winner: null,
     seed,
   };
   for (const p of [0, 1] as P[]) {
     // カードは対戦ごとに複製する（戦闘力が変わるため）。id は席ごとに振り直す
-    const cards = decks[p].cards.map((c, i) => ({ ...c, id: `${p}-${i}`, power: c.base, effects: c.effects.map((e) => ({ ...e })) }));
+    const cards = decks[p].cards.map((c, i) => ({
+      ...c,
+      id: `${p}-${i}`,
+      power: c.base,
+      ability: c.ability ? { ...c.ability } : null,
+      trap: c.trap ? { ...c.trap } : null,
+    }));
     s.deck[p] = shuffle(s, cards);
     draw(s, p, START_HAND);
   }
@@ -54,9 +66,9 @@ function startTurn(s: State): void {
   s.turnNo += 1;
   s.summonsLeft = 1;
   s.summonCount = 0;
+  s.trapSetsLeft = 1;
   s.attacked = [];
   const p = s.turn;
-  // 前の相手のターンで封じられたカードは、この持ち主のターンの間だけ動けない
   log(s, `--- ${s.names[p]} のターン ---`);
   const po = s.poison[p];
   if (po.t > 0) {
@@ -84,27 +96,46 @@ export function canSummon(s: State): boolean {
   return !blocked(s) && s.summonsLeft > 0 && s.summonCount < 4;
 }
 
-/** 手札の handIdx 番目を場の slot に出す。埋まっていれば置き換えて、古い方は墓地へ */
+export function canSetTrap(s: State): boolean {
+  return !blocked(s) && s.trapSetsLeft > 0;
+}
+
+/** 手札の handIdx 番目のモンスターを場の slot に出す。埋まっていれば置き換えて、古い方は墓地へ */
 export function summon(s: State, handIdx: number, slot: number): boolean {
   if (!canSummon(s)) return false;
   const p = s.turn;
   const card = s.hand[p][handIdx];
-  if (!card || slot < 0 || slot >= SLOTS) return false;
-  const old = s.field[p][slot];
-  if (old) {
-    s.field[p][slot] = null;
-    sendToGrave(s, p, old);
-    log(s, `${old.name} は入れ替わりで墓地へ`);
-  }
+  if (!card || card.kind !== 'monster' || slot < 0 || slot >= SLOTS) return false;
+  if (s.field[p][slot]) destroyAt(s, p, slot);
+  if (s.field[p][slot]) return false; // 不死身で残っていたら置けない
   s.hand[p].splice(handIdx, 1);
   s.field[p][slot] = card;
   s.summonsLeft -= 1;
   s.summonCount += 1;
   log(s, `${s.names[p]} は「${card.name}」（戦闘力 ${card.power}）を出した`);
-  for (const e of card.effects) {
-    if (s.winner !== null) break;
-    runEffect({ s, me: p, card }, e);
+  emit(s, { t: 'summon', p, slot });
+  const r = fireTrap(s, foe(p), 'summon', { actor: p, slot });
+  if (r.negated) {
+    log(s, `「${card.name}」の効果は無効になった`);
+    return true;
   }
+  if (s.winner === null && card.ability && s.field[p][slot] === card) fire(s, p, card, card.ability);
+  return true;
+}
+
+/** 罠カードを伏せる。相手には中身が見えない */
+export function setTrap(s: State, handIdx: number, slot: number): boolean {
+  if (!canSetTrap(s)) return false;
+  const p = s.turn;
+  const card = s.hand[p][handIdx];
+  if (!card || card.kind !== 'trap' || slot < 0 || slot >= TRAP_SLOTS) return false;
+  const old = s.traps[p][slot];
+  if (old) s.grave[p].push(old);
+  s.hand[p].splice(handIdx, 1);
+  s.traps[p][slot] = card;
+  s.trapSetsLeft -= 1;
+  log(s, `${s.names[p]} はカードを 1 枚伏せた`);
+  emit(s, { t: 'trapSet', p, slot });
   return true;
 }
 
@@ -120,15 +151,23 @@ export function attack(s: State, slot: number, target: number | 'direct'): boole
   const me = s.turn;
   const you = foe(me);
   const a = s.field[me][slot]!;
+  if (target === 'direct' ? fieldCards(s, you).length > 0 : !s.field[you][target]) return false;
   s.attacked.push(a.id);
+  emit(s, { t: 'attack', p: me, slot, target });
+
+  const trap = fireTrap(s, you, target === 'direct' ? 'direct' : 'attack', { actor: me, slot });
+  if (s.winner !== null) return true;
+  if (trap.negated || s.field[me][slot] !== a) {
+    log(s, '攻撃は無効になった');
+    return true;
+  }
   if (target === 'direct') {
-    if (fieldCards(s, you).length) return false;
     log(s, `「${a.name}」の直接攻撃！`);
     damage(s, you, a.power);
     return true;
   }
   const d = s.field[you][target];
-  if (!d) return false;
+  if (!d) return true;
   log(s, `「${a.name}」(${a.power}) が「${d.name}」(${d.power}) を攻撃`);
   if (a.power > d.power) {
     destroyAt(s, you, target);
@@ -159,9 +198,7 @@ export function answerPrompt(s: State, choiceIdx: number): void {
   const ch = pr.choices[choiceIdx];
   if (!ch) return;
   s.prompts.shift();
-  const me = ch.who === 'owner' ? pr.owner : foe(pr.owner);
-  runEffect({ s, me, card: null }, ch.eff);
+  if (pr.pending) answer(s, pr.owner, pr.pending, ch);
+  else if (ch.drinks > 0) log(s, '…');
   checkWin(s);
 }
-
-export { fieldCards };
