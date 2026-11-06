@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { cpuAct } from './game/ai';
-import { cardEffectText, cardFromEmbedding, randomCard } from './game/cardgen';
+import { cardEffectText, cardFromEmbedding, nounOf, randomCard } from './game/cardgen';
 import { answerPrompt, attack, canAttack, canSetTrap, canSummon, endTurn, newGame, setTrap, summon } from './game/engine';
 import { fieldCards } from './game/ops';
 import type { Card, P, State } from './game/types';
@@ -146,6 +146,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
   const [curtain, setCurtain] = useState(!vsCpu);
   const [muted, setMutedState] = useState(isMuted());
   const [how, setHow] = useState(false);
+  const [showLog, setShowLog] = useState(false);
   const lastTurn = useRef<P>(s.turn);
   const me: P = vsCpu ? 0 : s.turn;
   const you: P = me === 0 ? 1 : 0;
@@ -258,7 +259,8 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
             <button type="button" className="atk" onClick={() => { act((st) => attack(st, sel.i, 'direct')); setSel(null); }}>直接攻撃！</button>
           )}
           <button type="button" disabled={!myTurn || s.prompts.length > 0 || s.winner !== null} onClick={() => { act(endTurn); setSel(null); setLook(null); }}>ターン終了</button>
-           <button type="button" className="mute" aria-label="あそびかた" onClick={() => setHow(true)}>？</button>
+           <button type="button" className="mute" aria-label="ログ" onClick={() => setShowLog(true)}>📜</button>
+ <button type="button" className="mute" aria-label="あそびかた" onClick={() => setHow(true)}>？</button>
           <button type="button" className="mute" aria-label="音" onClick={() => { setMuted(!muted); setMutedState(!muted); }}>{muted ? '🔇' : '🔊'}</button>
         </div>
       </div>
@@ -288,6 +290,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
           <>
             <b>{look.name}</b>{look.kind === 'monster' ? `（戦闘力 ${look.power}）` : '（罠）'}<br />
             {cardEffectText(look)}
+            <br /><span className="lookhint">画像に近かった言葉：{look.words.map(nounOf).join('・')}</span>
           </>
         ) : (
           <span className="lookhint">カードをタップすると、効果の説明が出ます</span>
@@ -310,6 +313,15 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
       </div>
 
       {how && <HowTo onClose={() => setHow(false)} />}
+      {showLog && (
+        <div className="modal" onClick={() => setShowLog(false)}>
+          <div className="dialog howto" onClick={(e) => e.stopPropagation()}>
+            <h3>これまでの出来事</h3>
+            <ul>{s.log.slice(-16).map((l, i) => <li key={i}>{l}</li>)}</ul>
+            <button type="button" onClick={() => setShowLog(false)}>とじる</button>
+          </div>
+        </div>
+      )}
       {fx.flash && <div key={fx.flash.key} className={`flash ${fx.flash.tone} ${fx.flash.p === me ? 'bottom' : 'top'}`} />}
       {fx.banner && (
         <div key={fx.banner.key} className="banner">
