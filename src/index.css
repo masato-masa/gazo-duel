@@ -1,0 +1,5 @@
+:root { color-scheme: dark; font-family: system-ui, 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; }
+body { background: #1b1230; color: #f3ecff; -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }

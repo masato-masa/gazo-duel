@@ -1,0 +1,48 @@
+.setup { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
+.setup h1 { margin: 0 0 4px; font-size: 32px; letter-spacing: 2px; color: #ffd86b; }
+.lead { margin: 0 0 8px; }
+.note { font-size: 13px; opacity: .75; margin: 6px 0; }
+.error { color: #ff8a8a; padding: 0 16px; text-align: center; }
+.seat { background: #2a1d4a; border-radius: 14px; padding: 12px; margin: 12px 0; }
+.seat input[type=text], .seat > input { width: 100%; font-size: 16px; padding: 8px 10px; border-radius: 8px; border: 0; background: #3b2c66; color: #fff; }
+.kinds { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0; font-size: 14px; }
+.file { display: block; background: #4a3a80; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; }
+.file input { display: block; margin-top: 8px; max-width: 100%; }
+button.big { width: 100%; font-size: 18px; padding: 14px; border: 0; border-radius: 12px; background: #ffb400; color: #2a1a00; font-weight: 700; }
+button:disabled { opacity: .4; }
+
+.loading { height: 100%; display: grid; place-content: center; text-align: center; gap: 12px; padding: 20px; }
+.spin { width: 48px; height: 48px; margin: 0 auto; border: 5px solid #4a3a80; border-top-color: #ffd86b; border-radius: 50%; animation: sp 1s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }
+.bar { width: min(320px, 80vw); height: 10px; background: #3b2c66; border-radius: 6px; overflow: hidden; margin: 0 auto; }
+.bar i { display: block; height: 100%; background: #ffd86b; transition: width .2s; }
+
+.duel { height: 100dvh; display: flex; flex-direction: column; padding: 6px 8px; gap: 6px; max-width: 560px; margin: 0 auto; position: relative; }
+.foe-info, .myinfo { display: flex; gap: 10px; align-items: baseline; font-size: 13px; flex-wrap: wrap; }
+.lp { font-size: 18px; font-weight: 800; color: #ffd86b; }
+.row.field { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr; gap: 6px; flex: 1 1 0; min-height: 0; }
+.slot { border: 2px dashed #4a3a80; border-radius: 10px; min-width: 0; min-height: 0; position: relative; }
+.slot.drop { border-color: #ffd86b; background: #ffd86b22; }
+.mid { display: flex; gap: 8px; align-items: center; justify-content: space-between; min-height: 56px; }
+.logbox { font-size: 12px; opacity: .85; flex: 1; line-height: 1.35; }
+.btns { display: flex; flex-direction: column; gap: 6px; }
+.btns button { padding: 8px 12px; border-radius: 10px; border: 0; background: #6b53c4; color: #fff; font-weight: 700; }
+.btns .atk { background: #e0453a; }
+
+.card { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; width: 100%; height: 100%; background: #3b2c66; border-radius: 9px; overflow: hidden; border: 2px solid #5b49a0; position: absolute; inset: 0; }
+.card.small { position: static; width: 96px; height: 132px; flex: none; }
+.card.sel { border-color: #ffd86b; box-shadow: 0 0 0 2px #ffd86b; transform: translateY(-4px); }
+.card.target { border-color: #ff7b6e; }
+.card.done { opacity: .6; }
+.art { flex: 1; background-size: cover; background-position: center; display: grid; place-content: center; min-height: 0; }
+.artword { font-size: 13px; font-weight: 800; text-shadow: 0 1px 4px #000; padding: 2px; text-align: center; }
+.cname { font-size: 11px; padding: 2px 4px; line-height: 1.2; height: 2.5em; overflow: hidden; background: #2a1d4a; }
+.cpow { text-align: right; padding: 0 6px 2px; background: #2a1d4a; font-weight: 800; color: #ffd86b; font-size: 14px; }
+.hand { display: flex; gap: 6px; overflow-x: auto; padding: 8px 2px 4px; min-height: 148px; }
+.look { position: absolute; left: 8px; right: 8px; bottom: 160px; background: #000d; border: 1px solid #6b53c4; border-radius: 10px; padding: 10px; font-size: 13px; line-height: 1.5; z-index: 5; }
+
+.modal { position: fixed; inset: 0; background: #000b; display: grid; place-content: center; z-index: 10; padding: 16px; }
+.dialog { background: #2a1d4a; border: 2px solid #ffd86b; border-radius: 16px; padding: 20px; width: min(420px, 90vw); text-align: center; display: grid; gap: 10px; }
+.dialog p { margin: 0; font-size: 17px; line-height: 1.5; }
+.dialog button { padding: 12px; font-size: 16px; border-radius: 10px; border: 0; background: #ffb400; color: #2a1a00; font-weight: 700; }
+.curtain { background: #1b1230; }
