@@ -50,7 +50,7 @@ button:disabled { opacity: .4; }
 .trapback.mine { font-size: 9px; text-shadow: 0 1px 3px #000, 0 0 6px #000; }
 
 .field { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr; gap: 6px; flex: 1 1 0; min-height: 0; }
-.slot { border: 2px dashed #4a3a8066; border-radius: 12px; min-width: 0; min-height: 0; position: relative; background: #ffffff06; }
+.slot { border: 2px solid #8f7ae044; border-radius: 12px; min-width: 0; min-height: 0; position: relative; background: radial-gradient(ellipse at center, #b99cff1c, #0b051866); box-shadow: inset 0 0 18px #0008, 0 0 0 1px #0006; }
 .slot.drop { border-color: #ffd86b; background: #ffd86b1f; animation: pulse2 1s infinite; }
 @keyframes pulse2 { 50% { background: #ffd86b3a; } }
 .slot.lunge-up { animation: lunge-up .5s ease-in-out; z-index: 6; }
@@ -62,7 +62,9 @@ button:disabled { opacity: .4; }
 @keyframes ringout { from { transform: scale(.7); opacity: 1; box-shadow: 0 0 20px #ffd86b; } to { transform: scale(1.5); opacity: 0; } }
 
 /* 場のカード */
-.fcard { position: absolute; inset: 0; border-radius: 11px; overflow: hidden; border: 3px solid #e0b050; background: #2a1d4a; box-shadow: 0 4px 10px #0008; }
+.fcard { position: absolute; inset: 0; border-radius: 11px; overflow: hidden; border: 3px solid #e0b050; background: #2a1d4a; box-shadow: 0 4px 10px #0008, inset 0 0 0 1.5px #fff6, inset 0 0 14px #000a; }
+.fcard::after, .fart::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 30% 15%, #ffffff40, transparent 45%), radial-gradient(ellipse at center, transparent 55%, #000a 100%); }
+.fcard.trap { border-color: #b98cff; }
 .fcard.enter { animation: dropin .55s cubic-bezier(.2,1.3,.4,1); }
 @keyframes dropin { 0% { transform: translateY(-70px) scale(1.5) rotate(-8deg); opacity: 0; filter: brightness(2.2); } 60% { opacity: 1; } 100% { transform: none; filter: none; } }
 .fcard.sel { border-color: #fff; box-shadow: 0 0 0 3px #ffd86b, 0 0 18px #ffd86b; transform: translateY(-5px); }
@@ -80,19 +82,19 @@ button:disabled { opacity: .4; }
 @keyframes holo { from { background-position: 150% 0; } to { background-position: -50% 0; } }
 
 /* 手札のカード */
-.hand { display: flex; gap: 8px; overflow-x: auto; padding: 14px 2px 6px; min-height: 170px; flex: none; scrollbar-width: none; }
-.full { all: unset; box-sizing: border-box; cursor: pointer; flex: none; width: 118px; height: 166px; border-radius: 10px; overflow: hidden; position: relative; display: flex; flex-direction: column; border: 3px solid #e0b050; background: #2a1d4a; box-shadow: 0 5px 12px #000a; transition: transform .15s; }
-.full.trap { border-color: #b98cff; background: #281446; }
+.hand { display: flex; gap: 8px; overflow-x: auto; padding: 14px 2px 6px; min-height: 192px; flex: none; scrollbar-width: none; }
+.full { all: unset; box-sizing: border-box; cursor: pointer; flex: none; width: 124px; height: 176px; border-radius: 10px; overflow: hidden; position: relative; display: flex; flex-direction: column; border: 3px solid transparent; background: linear-gradient(#2a1d4a, #2a1d4a) padding-box, linear-gradient(145deg, #fff3b0, #d9992a 40%, #8a5a10 60%, #ffe08a) border-box; box-shadow: 0 5px 12px #000a, inset 0 0 0 1px #0008; transition: transform .15s; }
+.full.trap { background: linear-gradient(#281446, #281446) padding-box, linear-gradient(145deg, #e8d4ff, #8a56d6 40%, #4a2480 60%, #cba8ff) border-box; }
 .full.sel { transform: translateY(-12px) scale(1.04); border-color: #fff; box-shadow: 0 0 0 3px #ffd86b, 0 0 22px #ffd86b; }
 .full.hi { box-shadow: 0 0 14px #ffb400aa, 0 5px 12px #000a; }
-.fhead { display: flex; justify-content: space-between; gap: 4px; align-items: center; padding: 3px 5px; background: linear-gradient(#4a3a80, #35285f); font-size: 10.5px; font-weight: 800; line-height: 1.15; min-height: 28px; }
+.fhead { display: flex; justify-content: space-between; gap: 4px; align-items: center; padding: 3px 5px; background: linear-gradient(#5a4a96, #35285f); border-bottom: 1px solid #ffd86b66; font-size: 10.5px; font-weight: 800; line-height: 1.15; min-height: 28px; }
 .full.trap .fhead { background: linear-gradient(#6d3fb0, #4a2480); }
 .fn { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .trapmark { background: #1a0a33; color: #d9b8ff; border-radius: 4px; padding: 0 4px; font-size: 10px; flex: none; }
-.fart { position: relative; height: 66px; flex: none; overflow: hidden; }
+.fart { position: relative; height: 78px; flex: none; overflow: hidden; margin: 0 4px; border-radius: 4px; border: 1.5px solid #ffd86b99; box-shadow: inset 0 0 8px #000c; }
 .powbadge { position: absolute; right: 4px; bottom: 3px; min-width: 38px; padding: 1px 5px; border-radius: 11px; background: radial-gradient(#ffe27a, #e08a00); color: #3a2100; font-weight: 900; font-size: 14px; text-align: center; border: 2px solid #fff8; }
 .full.lo .powbadge { background: radial-gradient(#cfcfd8, #8a8a99); }
-.ftext { white-space: pre-line; padding: 4px 5px; font-size: 8.5px; line-height: 1.35; color: #e9e0ff; overflow: hidden; background: #1c1236; flex: 1; text-align: left; }
+.ftext { white-space: pre-line; padding: 4px 6px; font-size: 9px; line-height: 1.35; color: #e9e0ff; overflow: hidden; background: #1c1236; flex: 1; text-align: left; }
 
 /* ---- 中央・ボタン ---- */
 .mid { display: flex; gap: 8px; align-items: center; justify-content: space-between; min-height: 44px; flex: none; }
@@ -132,7 +134,7 @@ button:disabled { opacity: .4; }
 @keyframes burst { from { transform: translate(0, 0) scale(1.4); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) rotate(260deg) scale(.2); opacity: 0; } }
 
 /* ---- 手札の詳細・ダイアログ ---- */
-.look { white-space: pre-line; flex: none; height: 76px; overflow-y: auto; background: #0b0518cc; border: 1.5px solid #b98cff66; border-radius: 10px; padding: 6px 10px; font-size: 11.5px; line-height: 1.45; }
+.look { white-space: pre-line; flex: none; height: 62px; overflow-y: auto; background: #0b0518cc; border: 1.5px solid #b98cff66; border-radius: 10px; padding: 6px 10px; font-size: 11.5px; line-height: 1.45; }
 .lookhint { opacity: .55; }
 .look b { color: #ffd86b; font-size: 13px; }
 .modal { position: fixed; inset: 0; background: #000b; display: grid; place-content: center; z-index: 40; padding: 16px; animation: fadein .2s; }

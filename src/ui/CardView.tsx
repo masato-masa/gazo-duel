@@ -34,6 +34,11 @@ export function Art({ c }: { c: Faceable | Snap }) {
         <circle key={i} cx={s.x} cy={s.y} r={s.rad} fill={`hsl(${s.hue} 80% 65%)`} opacity={s.o} />
       ))}
       <rect width="100" height="100" fill={`url(#p${seed})`} />
+      <circle cx="50" cy="50" r="34" fill={`hsl(${h} 90% 75%)`} opacity="0.22" />
+      <circle cx="50" cy="50" r="24" fill="none" stroke="#fff" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="3 3" />
+      {shapes.slice(0, 3).map((s, i) => (
+        <path key={`s${i}`} d={`M${s.x} ${s.y - 5}L${s.x + 1.5} ${s.y - 1.5}L${s.x + 5} ${s.y}L${s.x + 1.5} ${s.y + 1.5}L${s.x} ${s.y + 5}L${s.x - 1.5} ${s.y + 1.5}L${s.x - 5} ${s.y}L${s.x - 1.5} ${s.y - 1.5}Z`} fill="#fff" opacity="0.7" />
+      ))}
       <text x="50" y="58" textAnchor="middle" fontSize={glyph.length > 2 ? 24 : 32} textLength={Math.min(84, glyph.length * 30)} lengthAdjust="spacingAndGlyphs" fontWeight="800" fill="#fff" stroke="#0006" strokeWidth="1.2" paintOrder="stroke" fontFamily="sans-serif">
         {glyph}
       </text>
