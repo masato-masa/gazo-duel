@@ -47,6 +47,7 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
   const [saved, setSaved] = useState<SavedDeck[]>(() => listDecks());
 
   return (
+    <div className="setup-bg">
     <div className="setup">
       <h1>ガゾデュエル</h1>
       <p className="lead">画像を 10 枚入れると、その画像に似た言葉からモンスターと罠のカードができます。飲みながら遊ぶ冗談カードバトル。</p>
@@ -96,6 +97,7 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
       <button type="button" className="ghostbtn" onClick={() => setHow(true)}>あそびかた</button>
       {how && <HowTo onClose={() => setHow(false)} />}
       {!ready && <p className="note">画像を選ぶ人は、ちょうど 10 枚が要ります。</p>}
+    </div>
     </div>
   );
 }
