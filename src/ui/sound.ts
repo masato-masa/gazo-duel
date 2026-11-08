@@ -57,7 +57,7 @@ function noise(c: AudioContext, t0: number, dur: number, vol: number, hp = 200):
   src.start(t0);
 }
 
-export type Sfx = 'summon' | 'attack' | 'damage' | 'heal' | 'destroy' | 'trap' | 'drink' | 'ability' | 'win' | 'tap';
+export type Sfx = 'summon' | 'attack' | 'damage' | 'heal' | 'destroy' | 'trap' | 'drink' | 'ability' | 'win' | 'tap' | 'ko';
 
 export function sfx(kind: Sfx): void {
   const c = ac();
@@ -97,6 +97,11 @@ export function sfx(kind: Sfx): void {
     case 'ability':
       tone(c, t, 440, 880, 0.2, 'triangle', 0.12);
       tone(c, t + 0.1, 660, 1320, 0.25, 'sine', 0.08);
+      break;
+    case 'ko':
+      noise(c, t, 0.6, 0.4, 60);
+      tone(c, t, 220, 35, 0.9, 'sawtooth', 0.22);
+      tone(c, t + 0.05, 110, 30, 1.2, 'sine', 0.35);
       break;
     case 'win':
       [523, 659, 784, 1047, 1319].forEach((f, i) => tone(c, t + i * 0.12, f, f, 0.4, 'triangle', 0.14));

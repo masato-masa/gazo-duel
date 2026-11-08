@@ -7,7 +7,7 @@ import type { Card, P, State } from './game/types';
 import { embedImage, loadClip } from './clip';
 import { listDecks, removeDeck, saveDeck, thumbnail, type SavedDeck } from './deckStore';
 import { Art, FieldCard, FullCard, TrapBack } from './ui/CardView';
-import { isMuted, setMuted, sfx } from './ui/sound';
+import { buzz, isMuted, setMuted, sfx } from './ui/sound';
 import { useFx } from './ui/useFx';
 import './App.css';
 
@@ -197,8 +197,15 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
     }
   });
 
+  // 決着: まず「KO」の間（スローな寄り）を見せてから、結果画面を出す
+  const [ended, setEnded] = useState(false);
   useEffect(() => {
-    if (s.winner !== null) sfx('win');
+    if (s.winner === null) return;
+    sfx('ko');
+    buzz(200);
+    const t1 = setTimeout(() => sfx('win'), 1700);
+    const t2 = setTimeout(() => setEnded(true), 2000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [s.winner]);
 
   // CPU は 1 手ごとに間を置く
@@ -261,7 +268,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
   const floatsOf = (p: P) => fx.floats.filter((f) => f.p === p);
 
   return (
-    <div className={`duel${fx.shake ? ' shake' : ''}`}>
+    <div className={`duel${fx.shake ? ' shake' : ''}${s.winner !== null ? ' koing' : ''}`}>
       <div className="info foe-info">
         <div className="who"><b>{s.names[you]}</b><span>手札 {s.hand[you].length}・山 {s.deck[you].length}・🍺{s.drinks[you]}</span></div>
         <LpBar lp={s.lp[you]} />
@@ -387,15 +394,71 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
           </div>
         </div>
       )}
-      {s.winner !== null && (
-        <div className="modal win">
-          <div className="dialog">
-            <h2>{s.winner === 'draw' ? '引き分け' : `${s.names[s.winner]} の勝ち！`}</h2>
-            <p>のんだ口数　{s.names[0]} {s.drinks[0]} ／ {s.names[1]} {s.drinks[1]}</p>
-            <button type="button" className="big" onClick={onExit}>もう一度</button>
-          </div>
-        </div>
+      {s.winner !== null && !ended && (
+        <div className="kofx"><b>K.O.</b></div>
       )}
+      {s.winner !== null && ended && <Result s={s} onExit={onExit} />}
+    </div>
+  );
+}
+
+const PUNISH = [
+  '一気に 3 口飲む', '勝者に肩をもんでもらう', '好きな人の名前を言う', '変顔を 10 秒キープ',
+  '次の乾杯の音頭をとる', '最近いちばん恥ずかしかった話をする', '語尾に「にゃん」を付けて 3 分話す', '右隣の人を全力でほめる',
+  'モノマネを 1 つやる', '勝者に一杯おごる', 'スマホの最新の写真を見せる', '勝者に「参りました」と土下座する',
+];
+
+/** 決着後の画面: 勝者・MVP・飲んだ口数・敗者の罰ゲームルーレット */
+function Result({ s, onExit }: { s: State; onExit: () => void }) {
+  const w = s.winner;
+  const loser: P | null = w === 'draw' || w === null ? null : w === 0 ? 1 : 0;
+  // MVP: 勝者の場と墓地で最も戦闘力の高いモンスター
+  const pool = w === 'draw' || w === null ? [] : [...s.field[w].filter((c): c is Card => !!c), ...s.grave[w].filter((c) => c.kind === 'monster')];
+  const mvp = pool.sort((a, b) => b.base - a.base)[0] ?? null;
+  const [spin, setSpin] = useState<'idle' | 'spinning' | 'done'>('idle');
+  const [pi, setPi] = useState(0);
+  const result = useRef(Math.floor(Math.random() * PUNISH.length));
+  useEffect(() => {
+    if (spin !== 'spinning') return;
+    let i = 0;
+    let wait = 60;
+    let t = 0;
+    const stopAt = Date.now() + 2600;
+    const step = () => {
+      i = (i + 1) % PUNISH.length;
+      setPi(i);
+      sfx('tap');
+      if (Date.now() > stopAt && i === result.current) {
+        setSpin('done');
+        sfx('win');
+        buzz(120);
+        return;
+      }
+      wait = Math.min(260, wait * (Date.now() > stopAt - 1200 ? 1.12 : 1.02));
+      t = window.setTimeout(step, wait);
+    };
+    t = window.setTimeout(step, wait);
+    return () => clearTimeout(t);
+  }, [spin]);
+  const who = loser === null ? 'ふたり' : s.names[loser];
+  return (
+    <div className="modal win">
+      <div className="dialog result">
+        <h2>{w === 'draw' ? '引き分け' : `${s.names[w!]} の勝ち！`}</h2>
+        {mvp && (
+          <div className="mvp">
+            <div className="mvpcard"><Art c={mvp} /></div>
+            <div><small>MVP</small><b>{mvp.name}</b><span>戦闘力 {mvp.base}</span></div>
+          </div>
+        )}
+        <p>のんだ口数　{s.names[0]} {s.drinks[0]} ／ {s.names[1]} {s.drinks[1]}</p>
+        <div className={`roulette ${spin}`}>
+          <small>{who} の罰ゲーム</small>
+          <b>{spin === 'idle' ? '？？？' : PUNISH[pi]}</b>
+        </div>
+        {spin === 'idle' && <button type="button" onClick={() => setSpin('spinning')}>罰ゲームルーレット</button>}
+        <button type="button" className="big" onClick={onExit}>もう一度</button>
+      </div>
     </div>
   );
 }

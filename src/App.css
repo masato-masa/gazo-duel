@@ -161,3 +161,24 @@ button:disabled { opacity: .4; }
 .savedrow { display: flex; gap: 8px; align-items: center; }
 .savedrow select { flex: 1; min-width: 0; font-size: 15px; padding: 9px 8px; border-radius: 8px; border: 0; background: #3b2c66; color: #fff; }
 .ghostbtn.small { width: auto; margin: 0; padding: 8px 12px; font-size: 13px; }
+
+/* 決着の演出 */
+.kofx { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; pointer-events: none; background: radial-gradient(circle, transparent 20%, #000a 90%); animation: kobg 2s ease-out forwards; }
+.kofx b { font-size: 76px; font-weight: 900; letter-spacing: 4px; color: #ff4d4d; text-shadow: 0 0 30px #ff0000, 0 4px 0 #600; animation: koslam 2s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes kobg { from { opacity: 0; } 25% { opacity: 1; } }
+@keyframes koslam { 0% { transform: scale(5); opacity: 0; } 30% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.25); opacity: 1; } }
+.koing { animation: kozoom 2s ease-out forwards; }
+@keyframes kozoom { to { transform: scale(1.04); filter: saturate(.4) contrast(1.15); } }
+.result { max-width: 340px; }
+.mvp { display: flex; gap: 12px; align-items: center; justify-content: center; margin: 8px 0; text-align: left; }
+.mvp .mvpcard { width: 72px; height: 96px; border-radius: 10px; overflow: hidden; border: 2px solid #ffd86b; box-shadow: 0 0 16px #ffb400aa; flex: none; }
+.mvp .mvpcard > * { width: 100%; height: 100%; object-fit: cover; }
+.mvp small { display: block; color: #ffd86b; font-weight: 800; letter-spacing: 2px; }
+.mvp b { display: block; font-size: 17px; }
+.mvp span { font-size: 12px; opacity: .8; }
+.roulette { margin: 10px 0; padding: 10px; border-radius: 12px; border: 2px dashed #c79bff; background: #1b1238; min-height: 64px; }
+.roulette small { display: block; opacity: .8; margin-bottom: 4px; }
+.roulette b { display: block; font-size: 18px; line-height: 1.35; }
+.roulette.spinning { border-color: #ffd86b; }
+.roulette.done { border: 2px solid #ffd86b; box-shadow: 0 0 22px #ffb400aa; animation: pop .4s; }
+.roulette.done b { color: #ffd86b; }
