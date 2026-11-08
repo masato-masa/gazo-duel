@@ -88,9 +88,18 @@ assign('poison', 'poison,spider,snake,mushroom,rotten,smelly,cockroach');
 assign('regen', 'sleepy,nap,bed,pillow,blanket,cozy,bathtub,garden,forest,tree');
 assign('discard', 'silence,quiet,boredom,monday,deadline,meeting,exam,homework,overtime work');
 assign('swapLp', 'mirror,chaos,weird,strange');
+// 追加した言葉（2026-11-08）
+assign('heal', 'pudding,yogurt,mango,melon,avocado,pumpkin,hot pot,green tea,nurse,kitten,puppy,rice ball,bento box,sweet potato,omelet');
+assign('damage', 'katana,chainsaw,tank,scorpion,tsunami,earthquake,bonfire,sumo,rugby,avalanche,thief');
+assign('seal', 'fence,brick wall,handcuffs,prisoner,scarecrow');
+assign('drinkFoe', 'beer mug,wine glass,sake bottle,highball,izakaya,afterparty,drinking game,karaoke,vending machine,cola');
+assign('draw', 'comic book,newspaper,movie,anime,detective,scientist,photograph');
+assign('powerUp', 'sumo wrestler,rhinoceros,hero,samurai,cowboy,energy drink');
+assign('regen', 'hot spring,cozy,bathroom,swimming pool,yoga');
+assign('discard', 'late for work,all nighter,hangover morning,breakup,lie');
 
 /** 向きが反転しやすい（自分に返る・相手が得する）言葉 */
-const UNLUCKY = new Set(['embarrassment', 'regret', 'monday', 'deadline', 'overtime work', 'hangover', 'boredom', 'rotten', 'cursed', 'curse', 'trap', 'clown', 'zombie', 'ghost']);
+const UNLUCKY = new Set(['embarrassment', 'regret', 'late for work', 'breakup', 'all nighter', 'hangover morning', 'monday', 'deadline', 'overtime work', 'hangover', 'boredom', 'rotten', 'cursed', 'curse', 'trap', 'clown', 'zombie', 'ghost']);
 
 /** LP・戦闘力にかかる効果の大きさの倍率（CPU 同士の対戦で、試合の長さを見て決めた） */
 const EFFECT_SCALE = 0.7;

@@ -542,3 +542,426 @@ angry|怒髪|怒った
 happy|幸せ|幸せな
 sad|哀愁|悲しい
 dizzy|めまい|目が回る
+# --- 追加（2026-11-08）: 食べ物・料理
+sweet potato|サツマイモ
+cabbage|キャベツ
+cucumber|キュウリ
+eggplant|ナス
+pumpkin|カボチャ
+broccoli|ブロッコリー
+garlic|ニンニク
+ginger root|ショウガ
+chili pepper|唐辛子
+avocado|アボカド
+mango|マンゴー
+pear|ナシ
+grapefruit|グレープフルーツ
+coconut|ココナッツ
+melon|メロン
+peanuts|ピーナッツ
+dumplings|餃子
+tempura|天ぷら
+udon noodles|うどん
+soba noodles|そば
+spaghetti|スパゲッティ
+rice ball|おにぎり
+bento box|お弁当
+sashimi|刺身
+takoyaki|たこ焼き
+fried rice|チャーハン
+omelet|オムレツ
+croissant|クロワッサン
+pudding|プリン
+jelly|ゼリー
+lollipop|ペロペロキャンディ
+cotton candy|綿あめ
+shaved ice|かき氷
+yogurt|ヨーグルト
+butter|バター
+bacon|ベーコン
+hot pot|寄せ鍋
+barbecue grill|バーベキュー
+taco|タコス
+oyster|牡蠣
+squid|イカ
+salmon|サケ
+tuna|マグロ
+eel|ウナギ
+seaweed|海苔
+# --- 追加: 飲み物
+beer mug|ジョッキ
+wine glass|ワイングラス
+sake bottle|徳利
+highball|ハイボール
+cola|コーラ
+energy drink|エナジードリンク
+green tea|緑茶
+teapot|急須
+kettle|やかん
+vending machine|自動販売機
+# --- 追加: 道具・文房具
+stapler|ホチキス
+adhesive tape|テープ
+glue|のり
+ruler|定規
+eraser|消しゴム
+crayon|クレヨン
+calculator|電卓
+sticker|シール
+rubber stamp|ハンコ
+nail|くぎ
+screw|ねじ
+power drill|ドリル
+ladder|はしご
+toolbox|工具箱
+chainsaw|チェーンソー
+fishing rod|釣り竿
+katana|日本刀
+baseball bat|バット
+kite|凧
+handcuffs|手錠
+whistle|笛
+bell|鈴
+megaphone|メガホン
+cigarette|タバコ
+vase|花瓶
+hourglass|砂時計
+alarm clock|目覚まし時計
+abacus|そろばん
+bookshelf|本棚
+curtain|カーテン
+carpet|じゅうたん
+vacuum cleaner|掃除機
+mop|モップ
+sponge|スポンジ
+shopping cart|カート
+basket|かご
+suitcase|スーツケース
+wheelchair|車いす
+stroller|ベビーカー
+face mask|マスク
+sunglasses|サングラス
+kimono|着物
+school uniform|制服
+business suit|スーツ
+swimsuit|水着
+sneakers|スニーカー
+baseball cap|キャップ
+perfume|香水
+lipstick|口紅
+treasure map|宝の地図
+tent|テント
+# --- 追加: 電化製品
+computer monitor|モニター
+game console|据え置きゲーム機
+arcade machine|ゲーセン
+air conditioner|エアコン
+rice cooker|炊飯器
+radio|ラジオ
+vinyl record|レコード
+cassette tape|カセットテープ
+telephone|電話
+traffic light|信号
+selfie stick|自撮り棒
+karaoke|カラオケ
+# --- 追加: 乗り物
+scooter|スクーター
+skateboard|スケボー
+roller skates|ローラースケート
+subway|地下鉄
+bullet train|新幹線
+cruise ship|豪華客船
+hot air balloon|熱気球
+parachute|パラシュート
+spaceship|宇宙船
+flying saucer|UFO
+tank|戦車
+race car|レーシングカー
+excavator|ショベルカー
+crane|クレーン
+# --- 追加: 動物・幻獣
+hedgehog|ハリネズミ
+otter|カワウソ
+raccoon|アライグマ
+sloth|ナマケモノ
+camel|ラクダ
+zebra|シマウマ
+hippo|カバ
+rhinoceros|サイ
+seal|アザラシ
+polar bear|シロクマ
+flamingo|フラミンゴ
+peacock|クジャク
+swan|白鳥
+crow|カラス
+pigeon|ハト
+sparrow|スズメ
+seagull|カモメ
+baby chick|ヒヨコ
+turkey bird|七面鳥
+pelican|ペリカン
+lobster|ロブスター
+goldfish|金魚
+chameleon|カメレオン
+scorpion|サソリ
+dragonfly|トンボ
+ladybug|テントウムシ
+firefly|ホタル
+unicorn|ユニコーン
+phoenix|フェニックス
+mermaid|人魚
+werewolf|狼男
+fairy|妖精
+goblin|ゴブリン
+giant|巨人
+kappa|河童
+tanuki|タヌキ
+shiba inu|柴犬
+puppy|子犬
+kitten|子猫
+black cat|黒猫
+lucky cat|招き猫
+# --- 追加: 人・職業・体
+firefighter|消防士
+nurse|看護師
+pilot|パイロット
+farmer|農家
+fisherman|漁師
+artist|画家
+singer|歌手
+dancer|ダンサー
+musician|音楽家
+athlete|アスリート
+businessman|サラリーマン
+waiter|ウェイター
+bartender|バーテンダー
+delivery person|配達員
+thief|泥棒
+prisoner|囚人
+bride|花嫁
+groom|花婿
+monk|僧侶
+samurai|侍
+sumo wrestler|力士
+cowboy|カウボーイ
+magician|手品師
+mascot character|ゆるキャラ
+scarecrow|かかし
+snowman|雪だるま
+selfie|自撮り
+hug|ハグ
+handshake|握手
+peace sign|ピース
+laughing|大笑い
+crying|泣き顔
+yawning|あくび
+jumping|ジャンプ
+shouting|絶叫
+couple|カップル
+twins|双子
+grandparents|祖父母
+mustache|ヒゲ
+skull|ドクロ
+smile|笑顔
+photographer|カメラマン
+scientist|博士
+detective|探偵
+hero|ヒーロー
+youtuber|ユーチューバー
+# --- 追加: 自然・現象
+sunrise|朝日
+full moon|満月
+meteor|流れ星
+aurora|オーロラ
+puddle|水たまり
+flood|洪水
+earthquake|地震
+avalanche|雪崩
+tsunami|津波
+bonfire|焚き火
+bubbles|シャボン玉
+sparks|火花
+cherry blossoms|桜
+autumn leaves|紅葉
+bamboo|竹
+pine tree|松
+palm tree|ヤシの木
+moss|苔
+coral reef|サンゴ礁
+island|島
+cliff|崖
+hill|丘
+rice field|田んぼ
+meadow|草原
+canyon|渓谷
+iceberg|氷山
+swamp|沼
+jungle|ジャングル
+pond|池
+stream|小川
+hot spring|温泉
+feather|羽
+spider web|クモの巣
+dandelion|タンポポ
+lotus|ハス
+snowflake|雪の結晶
+# --- 追加: 場所・建物
+apartment building|マンション
+skyscraper|高層ビル
+convenience store|コンビニ
+izakaya|居酒屋
+cafe|カフェ
+bakery|パン屋
+market|市場
+shopping mall|ショッピングモール
+train station|駅
+train platform|ホーム
+airport|空港
+harbor|港
+lighthouse|灯台
+windmill|風車
+factory|工場
+warehouse|倉庫
+gas station|ガソリンスタンド
+parking lot|駐車場
+crosswalk|横断歩道
+tunnel|トンネル
+highway|高速道路
+railway tracks|線路
+shopping street|商店街
+cemetery|墓地
+fence|フェンス
+brick wall|レンガの壁
+balcony|ベランダ
+bathroom|風呂場
+gym|ジム
+swimming pool|プール
+zoo|動物園
+aquarium|水族館
+amusement park|遊園地
+ferris wheel|観覧車
+roller coaster|ジェットコースター
+carousel|メリーゴーランド
+circus|サーカス
+theater stage|劇場
+cinema|映画館
+concert hall|コンサートホール
+pagoda|五重塔
+hotel|ホテル
+laboratory|研究室
+igloo|かまくら
+karaoke room|カラオケルーム
+fountain|噴水
+bench|ベンチ
+swing|ブランコ
+slide|滑り台
+# --- 追加: スポーツ・娯楽
+golf|ゴルフ
+volleyball|バレーボール
+rugby|ラグビー
+table tennis|卓球
+badminton|バドミントン
+skiing|スキー
+snowboarding|スノボ
+surfing|サーフィン
+bowling|ボウリング
+sumo|相撲
+yoga|ヨガ
+rock climbing|ロッククライミング
+comic book|マンガ
+anime|アニメ
+movie|映画
+mahjong|麻雀
+shogi|将棋
+slot machine|スロット
+roulette|ルーレット
+capsule toy|ガチャ
+trading card|トレカ
+audience|観客
+concert|コンサート
+rock band|バンド
+saxophone|サックス
+flute|フルート
+paintbrush|筆
+sculpture|彫刻
+photograph|写真
+newspaper|新聞
+ticket|チケット
+tug of war|綱引き
+water gun|水鉄砲
+rock paper scissors|じゃんけん
+drinking game|飲み会
+darts|ダーツ
+billiards|ビリヤード
+# --- 追加: 出来事・抽象
+lie|うそ
+truth|真実
+pride|プライド
+hope|希望
+surprise|サプライズ
+victory|勝利
+defeat|敗北
+success|成功
+adventure|冒険
+journey|旅
+nightmare|悪夢
+all nighter|徹夜
+payday|給料日
+diet|ダイエット
+summer vacation|夏休み
+first date|初デート
+reunion|同窓会
+afterparty|二次会
+hangover morning|二日酔いの朝
+late for work|遅刻
+fortune telling|占い
+prayer|祈り
+confession|告白
+breakup|失恋
+dance battle|ダンス対決
+# --- 追加: 状態・見た目（修飾の形つき）
+glittering|きらめき|きらめく
+sticky|ねばねば|ねばねばの
+slippery|ツルツル|ツルツルの
+fuzzy|もふもふ|もふもふの
+transparent|透明|透明な
+colorful|カラフル|カラフルな
+muddy|どろ|泥だらけの
+sparkling|しゅわしゅわ|しゅわしゅわの
+melting|溶解|溶ける
+floating|浮遊|浮かぶ
+flying|飛翔|空飛ぶ
+giant size|特大|特大の
+miniature|ミニ|ミニチュアの
+retro|レトロ|レトロな
+luxurious|豪華|豪華な
+cheap|安物|安っぽい
+lucky|ラッキー|幸運の
+unlucky|不運|不運な
+naughty|いたずら|いたずらな
+elegant|優雅|優雅な
+dangerous|危険|危険な
+invisible|透明人間|見えない
+haunted|幽霊屋敷|呪われし幽霊の
+bouncy|弾力|はずむ
+squishy|ぷにぷに|ぷにぷにの
+crunchy|サクサク|サクサクの
+greasy|油っこさ|油っこい
+salty|しょっぱさ|しょっぱい
+juicy|ジューシー|ジューシーな
+hungry|空腹|腹ペコの
+thirsty|渇き|のどが渇いた
+tired|疲労|疲れた
+nervous|緊張|緊張した
+proud|誇り|誇らしい
+shy|恥じらい|恥ずかしがりの
+lazy|ぐうたら|ぐうたらな
+busy|多忙|忙しい
+rich|大富豪|お金持ちの
+poor|貧乏|貧乏な
+famous|有名|有名な
+young|若さ|若い
+elderly|老い|年老いた
+wild|野生|野生の
+handmade|手作り|手作りの
+steaming|湯気|ほかほかの

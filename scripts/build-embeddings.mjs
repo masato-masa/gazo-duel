@@ -1,6 +1,6 @@
 // data/words.txt の各語を CLIP のテキスト側で数字の列（ベクトル）にして
 // src/data/words.json に書き出す。ブラウザでは画像側だけ動かし、ここで作った
-// ベクトルと突き合わせる（言葉 700 語ぶんを毎回計算しない）。
+// ベクトルと突き合わせる（言葉ぶんを毎回計算しない）。
 //   node scripts/build-embeddings.mjs
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { AutoTokenizer, CLIPTextModelWithProjection } from '@huggingface/transformers';
