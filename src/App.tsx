@@ -135,6 +135,11 @@ async function buildDeck(seat: Seat, k: number, seed: number, onStep: (done: num
   return cards;
 }
 
+/** 直近の出来事（ターンの区切りは除く）を改行でつなぐ */
+function recentLog(s: State, n: number): string {
+  return s.log.filter((l) => !l.startsWith('---') && !l.endsWith('引いた') && l !== '対戦開始！').slice(-n).join('\n');
+}
+
 /** LP の数字を、変化に合わせてなめらかに動かす */
 function useTween(value: number): number {
   const [shown, setShown] = useState(value);
@@ -174,7 +179,9 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
   const fx = useFx(s, tick);
   const [sel, setSel] = useState<{ kind: 'hand' | 'field'; i: number } | null>(null);
   const [look, setLook] = useState<Card | null>(null);
-  const [curtain, setCurtain] = useState(!vsCpu);
+  // 幕は「この番の人がまだ手札を見ると押していない」ときに、描画と同時に出す（ターンが替わった 1 コマに次の人の手札が映らないように）
+  const [acked, setAcked] = useState<P | null>(null);
+  const curtain = !vsCpu && acked !== s.turn;
   const [muted, setMutedState] = useState(isMuted());
   const [how, setHow] = useState(false);
   const [showLog, setShowLog] = useState(false);
@@ -191,7 +198,6 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
   useEffect(() => {
     if (!vsCpu && s.turn !== lastTurn.current && s.winner === null) {
       lastTurn.current = s.turn;
-      setCurtain(true);
       setSel(null);
       setLook(null);
     }
@@ -252,12 +258,13 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
   const hint = !myTurn
     ? 'あいてのターン'
     : handCard?.kind === 'monster'
-      ? '出すマスをタップ'
+      ? '光ったマスをタップ'
       : handCard?.kind === 'trap'
-        ? '伏せるマスをタップ'
+        ? '下の伏せマスをタップ'
         : sel?.kind === 'field'
-          ? foeEmpty ? '「直接攻撃」を押す' : '攻撃する相手をタップ'
-          : s.turnNo === 1 ? '手札を選んで出す（最初のターンは攻撃できない）' : '手札を出す／場のカードで攻撃';
+          ? '攻撃する相手をタップ'
+          : s.turnNo === 1 ? '手札を選んで出す（攻撃はまだ）' : '手札を出す／場から攻撃';
+  const directAtk = sel?.kind === 'field' && foeEmpty && myTurn;
 
   const hand = s.hand[me];
   const slotClass = (p: P, slot: number) => {
@@ -269,7 +276,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
 
   return (
     <div className={`duel${fx.shake ? ' shake' : ''}${s.winner !== null ? ' koing' : ''}`}>
-      <div className="info foe-info">
+      <div className={`info foe-info${s.turn === you ? ' active' : ''}`}>
         <div className="who"><b>{s.names[you]}</b><span>手札 {s.hand[you].length}・山 {s.deck[you].length}・🍺{s.drinks[you]}</span></div>
         <LpBar lp={s.lp[you]} />
         {floatsOf(you).map((f) => <span key={f.key} className={`float ${f.tone}`}>{f.text}</span>)}
@@ -291,11 +298,12 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
         ))}
       </div>
       <div className="mid">
-        <div className="hint">{s.turn === me ? `${s.names[me]} のターン` : `${s.names[s.turn]} のターン`}<small>{hint}</small></div>
+        {directAtk ? (
+          <button type="button" className="atk" onClick={() => { act((st) => attack(st, sel.i, 'direct')); setSel(null); }}>直接攻撃！</button>
+        ) : (
+          <div className="hint"><span className="turnname">{s.names[s.turn]} のターン</span><small>{hint}</small></div>
+        )}
         <div className="btns">
-          {sel?.kind === 'field' && foeEmpty && myTurn && (
-            <button type="button" className="atk" onClick={() => { act((st) => attack(st, sel.i, 'direct')); setSel(null); }}>直接攻撃！</button>
-          )}
           <button type="button" disabled={!myTurn || s.prompts.length > 0 || s.winner !== null} onClick={() => { act(endTurn); setSel(null); setLook(null); }}>ターン終了</button>
            <button type="button" className="mute" aria-label="ログ" onClick={() => setShowLog(true)}>📜</button>
  <button type="button" className="mute" aria-label="あそびかた" onClick={() => setHow(true)}>？</button>
@@ -318,7 +326,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
           </div>
         ))}
       </div>
-      <div className="info my-info">
+      <div className={`info my-info${s.turn === me ? ' active' : ''}`}>
         <div className="who"><b>{s.names[me]}</b><span>山 {s.deck[me].length}・🍺{s.drinks[me]}・{myTurn ? (canSummon(s) || canSetTrap(s) ? '出せる' : '') : ''}</span></div>
         <LpBar lp={s.lp[me]} />
         {floatsOf(me).map((f) => <span key={f.key} className={`float ${f.tone}`}>{f.text}</span>)}
@@ -331,7 +339,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
             <br /><span className="lookhint">画像に近かった言葉：{look.words.map(nounOf).join('・')}</span>
           </>
         ) : (
-          <span className="lookhint">カードをタップすると、効果の説明が出ます</span>
+          <span className="lookhint">{recentLog(s, 3) || 'カードをタップすると、効果の説明が出ます'}</span>
         )}
       </div>
       <div className="hand">
@@ -388,9 +396,13 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
       {curtain && s.winner === null && (
         <div className="modal curtain">
           <div className="dialog">
-            <p>{s.names[s.turn]} の番です</p>
-            <p className="note">端末を渡してください。相手に手札を見せないように。</p>
-            <button type="button" className="big" onClick={() => setCurtain(false)}>手札を見る</button>
+            <p className="who-turn">{s.names[s.turn]} の番です</p>
+            <p className="note">端末を {s.names[s.turn]} に渡してください。<br />相手に手札を見せないように。</p>
+            <div className="lpnow">
+              {([0, 1] as const).map((k) => <span key={k} className={k === s.turn ? 'on' : ''}>{s.names[k]}<b>{s.lp[k]}</b></span>)}
+            </div>
+            <p className="recent">{recentLog(s, 3)}</p>
+            <button type="button" className="big" onClick={() => setAcked(s.turn)}>手札を見る</button>
           </div>
         </div>
       )}

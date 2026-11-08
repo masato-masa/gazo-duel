@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react';
 import { cardEffectText, hashStr, nounOf } from '../game/cardgen';
 import type { Card, Snap } from '../game/types';
 
@@ -62,6 +63,12 @@ export function FieldCard({ c, mark, className = '' }: { c: Card; mark?: string;
 
 /** 手札・詳細のカード。効果の文章まで載せる */
 export function FullCard({ c, big, selected, onClick }: { c: Card; big?: boolean; selected?: boolean; onClick?: () => void }) {
+  const tx = useRef<HTMLDivElement>(null);
+  const [cut, setCut] = useState(false);
+  useLayoutEffect(() => {
+    const e = tx.current;
+    if (e) setCut(e.scrollHeight > e.clientHeight + 1);
+  }, [c]);
   return (
     <button type="button" className={`full ${c.kind}${big ? ' big' : ''}${selected ? ' sel' : ''} ${tier(c.base)}`} onClick={onClick}>
       <div className="fhead">
@@ -72,7 +79,7 @@ export function FullCard({ c, big, selected, onClick }: { c: Card; big?: boolean
         <Art c={c} />
         {c.kind === 'monster' && <div className="powbadge">{c.power}</div>}
       </div>
-      <div className="ftext">{cardEffectText(c)}</div>
+      <div ref={tx} className={`ftext${cut ? ' cut' : ''}`}>{cardEffectText(c)}</div>
       {c.base >= 1500 && c.kind === 'monster' && <div className="holo" />}
     </button>
   );

@@ -78,7 +78,7 @@ button:disabled { opacity: .4; }
 .fcard.hi { border-color: #ffd86b; box-shadow: 0 0 14px #ffb400aa, 0 4px 10px #0008; }
 .fcard.lo { border-color: #8a8a99; }
 .art-img, .art-svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.fname { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 4px 3px; font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; background: linear-gradient(transparent, #000c 55%); text-shadow: 0 1px 2px #000; max-height: 3.4em; overflow: hidden; }
+.fname { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 4px 3px; font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; background: linear-gradient(transparent, #000c 40%); text-shadow: 0 1px 2px #000; max-height: 5.6em; overflow: hidden; }
 .fpow { position: absolute; top: 4px; right: 4px; min-width: 40px; padding: 2px 6px; border-radius: 12px; background: radial-gradient(#ffe27a, #e08a00); color: #3a2100; font-weight: 900; font-size: 15px; text-align: center; border: 2px solid #fff8; box-shadow: 0 2px 4px #0008; }
 .fcard.lo .fpow { background: radial-gradient(#cfcfd8, #8a8a99); }
 .fcard.trap .fpow { display: none; }
@@ -86,8 +86,8 @@ button:disabled { opacity: .4; }
 @keyframes holo { from { background-position: 150% 0; } to { background-position: -50% 0; } }
 
 /* 手札のカード */
-.hand { display: flex; gap: 8px; overflow-x: auto; padding: 14px 2px 6px; min-height: 192px; flex: none; scrollbar-width: none; }
-.full { all: unset; box-sizing: border-box; cursor: pointer; flex: none; width: 124px; height: 176px; border-radius: 10px; overflow: hidden; position: relative; display: flex; flex-direction: column; border: 3px solid transparent; background: linear-gradient(#2a1d4a, #2a1d4a) padding-box, linear-gradient(145deg, #fff3b0, #d9992a 40%, #8a5a10 60%, #ffe08a) border-box; box-shadow: 0 5px 12px #000a, inset 0 0 0 1px #0008; transition: transform .15s; }
+.hand { display: flex; gap: 6px; overflow-x: auto; padding: 14px 2px 6px; min-height: 192px; flex: none; scrollbar-width: none; }
+.full { all: unset; box-sizing: border-box; cursor: pointer; flex: none; width: calc((100% - 16px) / 3); max-width: 124px; height: 176px; border-radius: 10px; overflow: hidden; position: relative; display: flex; flex-direction: column; border: 3px solid transparent; background: linear-gradient(#2a1d4a, #2a1d4a) padding-box, linear-gradient(145deg, #fff3b0, #d9992a 40%, #8a5a10 60%, #ffe08a) border-box; box-shadow: 0 5px 12px #000a, inset 0 0 0 1px #0008; transition: transform .15s; }
 .full.trap { background: linear-gradient(#281446, #281446) padding-box, linear-gradient(145deg, #e8d4ff, #8a56d6 40%, #4a2480 60%, #cba8ff) border-box; }
 .full.sel { transform: translateY(-12px) scale(1.04); border-color: #fff; box-shadow: 0 0 0 3px #ffd86b, 0 0 22px #ffd86b; }
 .full.hi { box-shadow: 0 0 14px #ffb400aa, 0 5px 12px #000a; }
@@ -98,18 +98,21 @@ button:disabled { opacity: .4; }
 .fart { position: relative; height: 78px; flex: none; overflow: hidden; margin: 0 4px; border-radius: 4px; border: 1.5px solid #ffd86b99; box-shadow: inset 0 0 8px #000c; }
 .powbadge { position: absolute; right: 4px; bottom: 3px; min-width: 38px; padding: 1px 5px; border-radius: 11px; background: radial-gradient(#ffe27a, #e08a00); color: #3a2100; font-weight: 900; font-size: 14px; text-align: center; border: 2px solid #fff8; }
 .full.lo .powbadge { background: radial-gradient(#cfcfd8, #8a8a99); }
-.ftext { white-space: pre-line; padding: 4px 6px; font-size: 9px; line-height: 1.35; color: #e9e0ff; overflow: hidden; background: #1c1236; flex: 1; text-align: left; }
+.ftext { white-space: pre-line; padding: 4px 5px; font-size: 9.5px; line-height: 1.3; color: #e9e0ff; overflow: hidden; background: #1c1236; flex: 1; min-height: 0; text-align: left; position: relative; }
+.ftext.cut::after { content: '…続きは上の説明欄'; position: absolute; right: 0; bottom: 0; left: 0; padding: 8px 4px 1px; text-align: right; font-size: 8.5px; color: #ffd86b; background: linear-gradient(transparent, #1c1236 55%); }
 
 /* ---- 中央・ボタン ---- */
 .mid { display: flex; gap: 8px; align-items: center; justify-content: space-between; min-height: 44px; flex: none; }
-.hint { flex: 1; min-width: 0; font-size: 13px; font-weight: 800; color: #ffd86b; display: flex; flex-direction: column; line-height: 1.25; }
+.hint { flex: 1; min-width: 0; font-size: 14px; font-weight: 800; color: #ffd86b; display: flex; flex-direction: column; line-height: 1.25; }
+.hint .turnname { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mid > .atk { flex: 1; min-height: 44px; font-size: 17px; padding: 8px 12px; border-radius: 10px; border: 0; color: #fff; font-weight: 800; background: linear-gradient(#ff6a5c, #cc2a1c); box-shadow: 0 3px 0 #7a130b; animation: pulse3 .8s infinite; }
 .hint small { font-weight: 500; color: #d8ccff; font-size: 11px; }
 .btns { display: flex; gap: 6px; align-items: center; }
-.btns button { white-space: nowrap; padding: 8px 12px; border-radius: 10px; border: 0; background: linear-gradient(#7d63dd, #5a43b5); color: #fff; font-weight: 800; box-shadow: 0 3px 0 #33237a; }
+.btns button { white-space: nowrap; min-height: 44px; min-width: 44px; padding: 8px 12px; border-radius: 10px; border: 0; background: linear-gradient(#7d63dd, #5a43b5); color: #fff; font-weight: 800; box-shadow: 0 3px 0 #33237a; }
 .btns button:active { transform: translateY(2px); box-shadow: 0 1px 0 #33237a; }
 .btns .atk { background: linear-gradient(#ff6a5c, #cc2a1c); box-shadow: 0 3px 0 #7a130b; animation: pulse3 .8s infinite; }
 @keyframes pulse3 { 50% { transform: scale(1.06); } }
-.btns .mute { padding: 8px; background: #3b2c66; box-shadow: none; }
+.btns .mute { padding: 8px; font-size: 18px; background: #3b2c66; box-shadow: none; }
 
 /* ---- 画面効果 ---- */
 .flash { position: absolute; left: 0; right: 0; height: 40%; pointer-events: none; z-index: 15; animation: flash .55s ease-out forwards; }
@@ -138,8 +141,8 @@ button:disabled { opacity: .4; }
 @keyframes burst { from { transform: translate(0, 0) scale(1.4); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) rotate(260deg) scale(.2); opacity: 0; } }
 
 /* ---- 手札の詳細・ダイアログ ---- */
-.look { white-space: pre-line; flex: none; height: 62px; overflow-y: auto; background: #0b0518cc; border: 1.5px solid #b98cff66; border-radius: 10px; padding: 6px 10px; font-size: 11.5px; line-height: 1.45; }
-.lookhint { opacity: .55; }
+.look { white-space: pre-line; flex: none; height: 92px; overflow-y: auto; background: #0b0518cc; border: 1.5px solid #b98cff66; border-radius: 10px; padding: 6px 10px; font-size: 12.5px; line-height: 1.45; }
+.lookhint { opacity: .8; }
 .look b { color: #ffd86b; font-size: 13px; }
 .modal { position: fixed; inset: 0; background: #000b; display: grid; place-content: center; z-index: 40; padding: 16px; animation: fadein .2s; }
 @keyframes fadein { from { opacity: 0; } }
@@ -150,6 +153,14 @@ button:disabled { opacity: .4; }
 .dialog button { padding: 12px; font-size: 16px; border-radius: 12px; border: 0; background: linear-gradient(#ffc933, #ff9d00); color: #2a1a00; font-weight: 800; box-shadow: 0 3px 0 #a45f00; }
 .dialog button:active { transform: translateY(2px); }
 .curtain { background: #1b1230; }
+.curtain .who-turn { font-size: 24px; font-weight: 800; color: #ffd86b; }
+.lpnow { display: flex; gap: 8px; }
+.lpnow span { flex: 1; border: 1.5px solid #5b49a0; border-radius: 10px; padding: 6px; font-size: 12px; opacity: .7; }
+.lpnow span.on { border-color: #ffd86b; opacity: 1; }
+.lpnow b { display: block; font-size: 22px; color: #ffd86b; }
+.recent { white-space: pre-line; font-size: 12px !important; line-height: 1.5 !important; opacity: .8; text-align: left; }
+.info.active .who b::before { content: '▶ '; color: #ffd86b; }
+.info.active .lpbar { border-color: #ffd86b; }
 .win .dialog h2 { margin: 0; font-size: 28px; color: #ffd86b; text-shadow: 0 0 16px #ffb400; }
 
 .ghostbtn { display: block; width: 100%; margin-top: 10px; padding: 12px; border-radius: 12px; border: 1.5px solid #6b53c4; background: transparent; color: #e6dcff; font-size: 15px; font-weight: 700; }
