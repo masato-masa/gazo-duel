@@ -35,7 +35,7 @@ const bad = (c: Ctx, flip: boolean): P => (flip ? c.me : foe(c.me));
 
 export const ACTIONS: Action[] = [
   // ---- LP・戦闘力
-  { id: 'heal', unit: 'lp', range: [300, 1500, 100], text: (v, f) => `${f ? '相手' : '自分'}のLPを ${v} 回復`, run: (c, v, f) => heal(c.s, good(c, f), v) },
+  { id: 'heal', unit: 'lp', range: [300, 1500, 100], text: (v, f) => `${f ? '相手' : '自分'}の LP を ${v} 回復`, run: (c, v, f) => heal(c.s, good(c, f), v) },
   { id: 'damage', unit: 'lp', range: [300, 1500, 100], text: (v, f) => `${f ? '自分' : '相手'}に ${v} ダメージ`, run: (c, v, f) => damage(c.s, bad(c, f), v) },
   {
     id: 'powerUp', unit: 'lp', range: [300, 1500, 100],
@@ -246,13 +246,13 @@ export const ACTION_BY_ID = new Map(ACTIONS.map((a) => [a.id, a]));
 
 export const SCALES: Record<Scale, { text: (per: number) => string }> = {
   flat: { text: () => '' },
-  perHand: { text: (p) => `自分の手札 1 枚につき +${p}` },
-  perField: { text: (p) => `場のカード 1 枚につき（両者の合計）+${p}` },
-  perGrave: { text: (p) => `自分の墓地 1 枚につき +${p}` },
-  perDrunk: { text: (p) => `ここまでに飲んだ口数（両者の合計）× ${p}` },
-  perTurn: { text: (p) => `経過ターン数（片側）× ${p}` },
-  dice: { text: (p) => `サイコロの目 × ${p}` },
-  lpGap: { text: () => '両者の LP の差の 1/4 を加算' },
+  perHand: { text: (p) => `さらに自分の手札 1 枚ごとに +${p}` },
+  perField: { text: (p) => `さらに場のカード 1 枚ごとに +${p}（両者ぶん）` },
+  perGrave: { text: (p) => `さらに自分の墓地 1 枚ごとに +${p}` },
+  perDrunk: { text: (p) => `さらに飲んだ口数 1 口ごとに +${p}（両者の合計）` },
+  perTurn: { text: (p) => `さらにお互い 1 回ずつ番が回るごとに +${p}` },
+  dice: { text: (p) => `さらにサイコロの目 × ${p}` },
+  lpGap: { text: () => 'さらに両者の LP の差の 1/4' },
 };
 
 function scaleBonus(s: State, owner: P, a: Ability): number {
@@ -280,7 +280,7 @@ interface CondDef {
 }
 
 const COUNT_WORD: Record<string, string> = { draw: '枚', discard: '枚', mill: '枚', drinkFoe: '口' };
-const bonusText = (a: Ability, unit: Unit): string => (unit === 'count' ? `+1${COUNT_WORD[a.action] ?? ''}` : `+${a.condN}`);
+const bonusText = (a: Ability, unit: Unit): string => (unit === 'count' ? `1 ${COUNT_WORD[a.action] ?? '枚'}ふえる` : `+${a.condN}`);
 const COND_TEXT: Record<CondKind, CondDef> = {
   none: { text: () => '' },
   sake: { text: (a, u) => `お酒を飲んでもよい（1 口につき ${bonusText(a, u)}、最大 3 口）` },
@@ -301,7 +301,7 @@ export const NONE_UNIT_CONDS: CondKind[] = ['none', 'rps', 'name', 'imitate', 'c
 export function abilityText(a: Ability): string {
   const act = ACTION_BY_ID.get(a.action)!;
   const sc = SCALES[a.scale].text(a.per);
-  const base = act.unit === 'none' ? act.text(0, a.flip) : act.text(a.n, a.flip) + (sc ? `（${sc}）` : '');
+  const base = act.unit === 'none' ? act.text(0, a.flip) : act.text(a.n, a.flip) + (sc ? `。${sc}` : '');
   const cond = COND_TEXT[a.cond].text(a, act.unit);
   return cond ? `${cond}
 ▶ ${base}` : base;

@@ -104,6 +104,19 @@ const UNLUCKY = new Set(['embarrassment', 'regret', 'late for work', 'breakup', 
 /** LP・戦闘力にかかる効果の大きさの倍率（CPU 同士の対戦で、試合の長さを見て決めた） */
 const EFFECT_SCALE = 0.7;
 
+const isAdj = (w: Word) => w.mod !== `${w.noun}の` && w.mod.length > 0;
+
+/**
+ * 名前の繋ぎ方。名詞が 2 つ並ぶときは「AとBの」にする（「AのBのC」と「の」が連なるのを避ける）。
+ * 形容は名詞の後ろ・本体の直前に置く（ピエロと骸骨のサビたバイク）。
+ */
+export function cardName(head: Word, rest: Word[]): string {
+  const nouns = rest.filter((w) => !isAdj(w));
+  const adjs = rest.filter(isAdj);
+  const nounPart = nouns.length >= 2 ? nouns.slice(0, -1).map((w) => w.noun).join('と') + 'と' + nouns[nouns.length - 1].mod : nouns.map((w) => w.mod).join('');
+  return nounPart + adjs.map((w) => w.mod).join('') + head.noun;
+}
+
 const TRAP_BONUS = ['heal', 'damage', 'draw', 'drinkFoe', 'powerDown', 'discard'];
 
 function rollAbility(rnd: () => number, w1: Word, w2: Word, allowed?: string[]): Ability {
@@ -124,7 +137,7 @@ function rollAbility(rnd: () => number, w1: Word, w2: Word, allowed?: string[]):
   }
 
   const condPool: [CondKind, number][] = [
-    ['none', 34], ['sake', 20], ['rps', 8], ['name', 8], ['shame', 6], ['praise', 5], ['imitate', 5], ['coin', 8], ['parity', 6],
+    ['none', 26], ['sake', 20], ['rps', 8], ['name', 8], ['shame', 10], ['praise', 9], ['imitate', 6], ['coin', 8], ['parity', 5],
   ];
   const conds = act.unit === 'none' ? condPool.filter(([c]) => NONE_UNIT_CONDS.includes(c)) : condPool;
   const cond = weighted(rnd, conds);
@@ -139,10 +152,8 @@ function rollAbility(rnd: () => number, w1: Word, w2: Word, allowed?: string[]):
 export function buildCard(top: number[], seed: number, img: string, id: string): Card {
   const rnd = mulberry(seed);
   const ws = top.map((i) => WORDS[i]);
-  const isAdj = (w: Word) => w.mod !== `${w.noun}の` && w.mod.length > 0;
   const head = ws.find((w) => !isAdj(w)) ?? ws[0];
-  const rest = ws.filter((w) => w !== head).reverse();
-  const name = rest.map((w) => w.mod).join('') + head.noun;
+  const name = cardName(head, ws.filter((w) => w !== head).reverse());
   const hue = Math.floor(rnd() * 360);
   const isTrap = rnd() < 0.3;
   const words = ws.map((w) => w.en);
