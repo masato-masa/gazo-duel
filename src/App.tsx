@@ -60,19 +60,19 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
           <input value={seats[i].name} onChange={(e) => set(i, { name: e.target.value })} aria-label="名前" />
           <div className="kinds">
             <label>
-              <input type="radio" checked={seats[i].kind === 'images'} onChange={() => set(i, { kind: 'images' })} /> 画像 10 枚
+              <input type="radio" name={`kind${i}`} checked={seats[i].kind === 'images'} onChange={() => set(i, { kind: 'images' })} /> 画像 10 枚
             </label>
             {saved.length > 0 && (
               <label>
-                <input type="radio" checked={seats[i].kind === 'saved'} onChange={() => set(i, { kind: 'saved', savedId: saved[0]!.id })} /> 前のデッキ
+                <input type="radio" name={`kind${i}`} checked={seats[i].kind === 'saved'} onChange={() => set(i, { kind: 'saved', savedId: saved[0]!.id })} /> 前のデッキ
               </label>
             )}
             <label>
-              <input type="radio" checked={seats[i].kind === 'random'} onChange={() => set(i, { kind: 'random' })} /> お試し（画像なし）
+              <input type="radio" name={`kind${i}`} checked={seats[i].kind === 'random'} onChange={() => set(i, { kind: 'random' })} /> お試し
             </label>
             {i === 1 && (
               <label>
-                <input type="radio" checked={seats[i].kind === 'cpu'} onChange={() => set(i, { kind: 'cpu', name: 'CPU' })} /> CPU と対戦
+                <input type="radio" name={`kind${i}`} checked={seats[i].kind === 'cpu'} onChange={() => set(i, { kind: 'cpu', name: 'CPU' })} /> CPU
               </label>
             )}
           </div>
@@ -87,19 +87,18 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
             </div>
           )}
           {seats[i].kind === 'images' && (
-            <label className="file">
-              画像を選ぶ（{seats[i].files.length} / {DECK}）
+            <label className={`file${seats[i].files.length === DECK ? ' ok' : ''}`} style={{ '--p': `${(seats[i].files.length / DECK) * 100}%` } as React.CSSProperties}>
+              {seats[i].files.length === DECK ? `✓ ${DECK} 枚そろった（選びなおす）` : `画像を選ぶ　${seats[i].files.length} / ${DECK} 枚`}
               <input type="file" accept="image/*" multiple onChange={(e) => set(i, { files: Array.from(e.target.files ?? []).slice(0, DECK) })} />
             </label>
           )}
         </section>
       ))}
       <button type="button" className="big" disabled={!ready} onClick={() => onStart(seats)}>
-        はじめる
+        {ready ? 'はじめる' : `画像を ${DECK} 枚そろえてね`}
       </button>
       <button type="button" className="ghostbtn" onClick={() => setHow(true)}>あそびかた</button>
       {how && <HowTo onClose={() => setHow(false)} />}
-      {!ready && <p className="note">画像を選ぶ人は、ちょうど 10 枚が要ります。</p>}
     </div>
     </div>
   );
@@ -532,7 +531,7 @@ export default function App() {
   return (
     <>
       <Setup onStart={start} />
-      {error && <p className="error">{error}</p>}
+      {error && <button type="button" className="error" onClick={() => setError('')}>{error}<small>タップで閉じる</small></button>}
     </>
   );
 }
