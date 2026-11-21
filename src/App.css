@@ -226,3 +226,7 @@ button:disabled { opacity: .4; }
 
 .nexthint { display: block; font-size: 16px; font-weight: 800; color: #ffd86b; line-height: 1.5; }
 .dialog button.ghostbtn { background: transparent; border: 1.5px solid #8f78d8; color: #e9e0ff; box-shadow: none; }
+
+.ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 3px; object-fit: contain; }
+.ico.big { width: 22px; height: 22px; vertical-align: -5px; }
+.trapmark img { width: 15px; height: 15px; display: block; }

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import iconTrap from '../assets/icon-trap.png';
 import { cardEffectText, hashStr, nounOf } from '../game/cardgen';
 import type { Card, Snap } from '../game/types';
 
@@ -73,7 +74,7 @@ export function FullCard({ c, big, selected, onClick }: { c: Card; big?: boolean
     <button type="button" className={`full ${c.kind}${big ? ' big' : ''}${selected ? ' sel' : ''} ${tier(c.base)}`} onClick={onClick}>
       <div className="fhead">
         <span className="fn">{c.name}</span>
-        {c.kind === 'trap' && <span className="trapmark">罠</span>}
+        {c.kind === 'trap' && <span className="trapmark"><img src={iconTrap} alt="罠" /></span>}
       </div>
       <div className="fart">
         <Art c={c} />
@@ -102,7 +103,7 @@ export function CardZoom({ c, onClose }: { c: Card; onClose: () => void }) {
       <div className={`zoomcard ${c.kind} ${tier(c.base)}`}>
         <div className="zhead">
           <span className="zname">{c.name}</span>
-          {c.kind === 'trap' ? <span className="trapmark">罠</span> : <span className="zpow">{c.power}</span>}
+          {c.kind === 'trap' ? <span className="trapmark"><img src={iconTrap} alt="罠" /></span> : <span className="zpow">{c.power}</span>}
         </div>
         <div className="zart">
           <Art c={c} />

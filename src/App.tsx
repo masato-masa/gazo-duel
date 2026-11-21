@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import iconBeer from './assets/icon-beer.png';
+import iconSword from './assets/icon-sword.png';
 import { cpuAct } from './game/ai';
 import { cardEffectText, cardFromEmbedding, randomCard } from './game/cardgen';
 import { answerPrompt, attack, canAttack, canSetTrap, canSummon, endTurn, newGame, setTrap, summon } from './game/engine';
@@ -280,7 +282,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
     <div className={`duel${fx.shake ? ' shake' : ''}${s.winner !== null ? ' koing' : ''}`}>
       {zoom && <CardZoom c={zoom} onClose={() => setZoom(null)} />}
       <div className={`info foe-info${s.turn === you ? ' active' : ''}`}>
-        <div className="who"><b>{s.names[you]}</b><span>🍺 {s.drinks[you]}</span></div>
+        <div className="who"><b>{s.names[you]}</b><span><img className="ico" src={iconBeer} alt="お酒" />{s.drinks[you]}</span></div>
         <LpBar lp={s.lp[you]} />
         {floatsOf(you).map((f) => <span key={f.key} className={`float ${f.tone}`}>{f.text}</span>)}
       </div>
@@ -302,7 +304,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
       </div>
       <div className="mid">
         {directAtk ? (
-          <button type="button" className="atk" onClick={() => { act((st) => attack(st, sel.i, 'direct')); setSel(null); }}>直接攻撃！</button>
+          <button type="button" className="atk" onClick={() => { act((st) => attack(st, sel.i, 'direct')); setSel(null); }}><img className="ico big" src={iconSword} alt="" />直接攻撃！</button>
         ) : (
           <div className="hint"><span className="turnname">{s.names[s.turn]} のターン</span></div>
         )}
@@ -329,7 +331,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
         ))}
       </div>
       <div className={`info my-info${s.turn === me ? ' active' : ''}`}>
-        <div className="who"><b>{s.names[me]}</b><span>🍺 {s.drinks[me]}</span></div>
+        <div className="who"><b>{s.names[me]}</b><span><img className="ico" src={iconBeer} alt="お酒" />{s.drinks[me]}</span></div>
         <LpBar lp={s.lp[me]} />
         {floatsOf(me).map((f) => <span key={f.key} className={`float ${f.tone}`}>{f.text}</span>)}
       </div>

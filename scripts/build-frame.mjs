@@ -2,7 +2,7 @@
 //   node scripts/build-frame.mjs
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const sharp = require('../../city-builders/node_modules/sharp');
+const sharp = require('sharp');
 
 // カード枠: 外側と中身の白を、外周と中央から塗りつぶして透明にする（ChatGPT の画像は透過 PNG にならないため）。
 {
