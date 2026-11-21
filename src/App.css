@@ -1,6 +1,6 @@
 /* ---- セットアップ・読み込み ---- */
 .setup-bg { min-height: 100%; background: linear-gradient(#1b1230cc, #0b0518ee), url('./assets/table.webp') center / cover fixed, #1b1230; }
-.setup { max-width: 520px; margin: 0 auto; padding: 22px 16px 40px; }
+.setup { max-width: 520px; margin: 0 auto; padding: 16px 16px 24px; }
 .setup h1 { font-size: 40px; text-align: center; }
 .setup h1::after { content: ''; display: block; height: 3px; margin: 8px auto 0; width: 120px; border-radius: 2px; background: linear-gradient(90deg, transparent, #ffd86b, transparent); }
 .setup .lead { text-align: center; }
@@ -8,7 +8,7 @@
 .lead { margin: 0 0 8px; line-height: 1.55; }
 .note { font-size: 13px; opacity: .75; margin: 6px 0; line-height: 1.5; }
 .error { color: #ff8a8a; padding: 0 16px; text-align: center; }
-.seat { background: linear-gradient(160deg, #2e2052ee, #231640ee); border: 1px solid #6b53c4; border-radius: 16px; padding: 14px; margin: 14px 0; box-shadow: 0 6px 18px #0009, inset 0 1px 0 #ffffff1a; }
+.seat { background: linear-gradient(160deg, #2e2052ee, #231640ee); border: 1px solid #6b53c4; border-radius: 16px; padding: 14px; margin: 10px 0; box-shadow: 0 6px 18px #0009, inset 0 1px 0 #ffffff1a; }
 .seat > input { width: 100%; min-height: 44px; box-sizing: border-box; font-size: 16px; padding: 8px 12px; border-radius: 8px; border: 0; background: #3b2c66; color: #fff; }
 .kinds { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; font-size: 15px; }
 .kinds label { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 22px; background: #3b2c66; cursor: pointer; }
@@ -187,12 +187,12 @@ button:disabled { opacity: .4; }
 .koing { animation: kozoom 2s ease-out forwards; }
 @keyframes kozoom { to { transform: scale(1.04); filter: saturate(.4) contrast(1.15); } }
 .result { max-width: 340px; }
-.mvp { display: flex; gap: 12px; align-items: center; justify-content: center; margin: 8px 0; text-align: left; }
-.mvp .mvpcard { width: 72px; height: 96px; border-radius: 10px; overflow: hidden; border: 2px solid #ffd86b; box-shadow: 0 0 16px #ffb400aa; flex: none; }
+.mvp { display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; margin: 10px 0; text-align: center; }
+.mvp .mvpcard { width: 120px; height: 160px; border-radius: 10px; overflow: hidden; border: 2px solid #ffd86b; box-shadow: 0 0 16px #ffb400aa; flex: none; }
 .mvp .mvpcard > * { width: 100%; height: 100%; object-fit: cover; }
 .mvp small { display: block; color: #ffd86b; font-weight: 800; letter-spacing: 2px; }
-.mvp b { display: block; font-size: 17px; }
-.mvp span { font-size: 12px; opacity: .8; }
+.mvp b { display: block; font-size: 20px; }
+.mvp span { font-size: 14px; opacity: .9; }
 .roulette { margin: 10px 0; padding: 10px; border-radius: 12px; border: 2px dashed #c79bff; background: #1b1238; min-height: 64px; }
 .roulette small { display: block; opacity: .8; margin-bottom: 4px; }
 .roulette b { display: block; font-size: 18px; line-height: 1.35; }
@@ -223,3 +223,6 @@ button:disabled { opacity: .4; }
 /* ---- カード枠（ChatGPT で作った金の飾り枠。scripts/build-frame.mjs） ---- */
 .full::before, .fcard::before { content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; border: 11px solid transparent; border-image: url('./assets/card-frame.png') 44 / 11px stretch; }
 .full.trap::before, .fcard.trap::before { filter: hue-rotate(235deg) saturate(.9) brightness(1.05); }
+
+.nexthint { display: block; font-size: 16px; font-weight: 800; color: #ffd86b; line-height: 1.5; }
+.dialog button.ghostbtn { background: transparent; border: 1.5px solid #8f78d8; color: #e9e0ff; box-shadow: none; }

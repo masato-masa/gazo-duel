@@ -16,7 +16,7 @@ type Seat = { name: string; kind: 'images' | 'random' | 'cpu' | 'saved'; files: 
 const DECK = 10;
 
 
-function HowTo({ onClose }: { onClose: () => void }) {
+function HowTo({ onClose, onLog }: { onClose: () => void; onLog?: () => void }) {
   return (
     <div className="modal" onClick={onClose}>
       <div className="dialog howto" onClick={(e) => e.stopPropagation()}>
@@ -29,6 +29,7 @@ function HowTo({ onClose }: { onClose: () => void }) {
           <li><b>罠：</b>手札から下の伏せマスへ（1 ターン 1 枚）。相手には中身が見えない。きっかけが起きたら自動で発動する。</li>
           <li><b>お酒：</b>能力の条件に「お酒を飲んでもよい」「じゃんけん」「早口」などが付くカードがある。出た問いに答えて、結果のボタンを押す。飲む量は自己責任で。</li>
         </ul>
+        {onLog && <button type="button" className="ghostbtn" onClick={() => { onClose(); onLog(); }}>これまでのログを見る</button>}
         <button type="button" onClick={onClose}>とじる</button>
       </div>
     </div>
@@ -50,8 +51,8 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
     <div className="setup-bg">
     <div className="setup">
       <h1>ガゾデュエル</h1>
-      <p className="lead">画像を 10 枚入れると、その画像に似た言葉からモンスターと罠のカードができます。飲みながら遊ぶ冗談カードバトル。</p>
-      <p className="note">画像はこの端末の中だけで分析します。どこにも送りません。初回だけ分析用のモデル（約 90MB）を読み込みます。</p>
+      <p className="lead">画像 10 枚から変なカードを作って対戦する、飲みながらの冗談バトル。</p>
+      <p className="note">画像は端末の中だけで分析します（初回だけ約 90MB の読み込み）。</p>
       {([0, 1] as const).map((i) => (
         <section key={i} className="seat">
           <input value={seats[i].name} onChange={(e) => set(i, { name: e.target.value })} aria-label="名前" />
@@ -279,7 +280,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
     <div className={`duel${fx.shake ? ' shake' : ''}${s.winner !== null ? ' koing' : ''}`}>
       {zoom && <CardZoom c={zoom} onClose={() => setZoom(null)} />}
       <div className={`info foe-info${s.turn === you ? ' active' : ''}`}>
-        <div className="who"><b>{s.names[you]}</b><span>手札 {s.hand[you].length}・山 {s.deck[you].length}・🍺{s.drinks[you]}</span></div>
+        <div className="who"><b>{s.names[you]}</b><span>🍺 {s.drinks[you]}</span></div>
         <LpBar lp={s.lp[you]} />
         {floatsOf(you).map((f) => <span key={f.key} className={`float ${f.tone}`}>{f.text}</span>)}
       </div>
@@ -303,12 +304,11 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
         {directAtk ? (
           <button type="button" className="atk" onClick={() => { act((st) => attack(st, sel.i, 'direct')); setSel(null); }}>直接攻撃！</button>
         ) : (
-          <div className="hint"><span className="turnname">{s.names[s.turn]} のターン</span><small>{hint}</small></div>
+          <div className="hint"><span className="turnname">{s.names[s.turn]} のターン</span></div>
         )}
         <div className="btns">
           <button type="button" disabled={!myTurn || s.prompts.length > 0 || s.winner !== null} onClick={() => { act(endTurn); setSel(null); setLook(null); }}>ターン終了</button>
-           <button type="button" className="mute" aria-label="ログ" onClick={() => setShowLog(true)}>📜</button>
- <button type="button" className="mute" aria-label="あそびかた" onClick={() => setHow(true)}>？</button>
+          <button type="button" className="mute" aria-label="あそびかた" onClick={() => setHow(true)}>？</button>
           <button type="button" className="mute" aria-label="音" onClick={() => { setMuted(!muted); setMutedState(!muted); }}>{muted ? '🔇' : '🔊'}</button>
         </div>
       </div>
@@ -329,7 +329,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
         ))}
       </div>
       <div className={`info my-info${s.turn === me ? ' active' : ''}`}>
-        <div className="who"><b>{s.names[me]}</b><span>山 {s.deck[me].length}・🍺{s.drinks[me]}・{myTurn ? (canSummon(s) || canSetTrap(s) ? '出せる' : '') : ''}</span></div>
+        <div className="who"><b>{s.names[me]}</b><span>🍺 {s.drinks[me]}</span></div>
         <LpBar lp={s.lp[me]} />
         {floatsOf(me).map((f) => <span key={f.key} className={`float ${f.tone}`}>{f.text}</span>)}
       </div>
@@ -341,7 +341,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
             {cardEffectText(look)}
           </>
         ) : (
-          <span className="lookhint">{recentLog(s, 3) || 'カードをタップすると、効果の説明が出ます'}</span>
+          <span className="nexthint">{hint}</span>
         )}
       </div>
       <div className="hand">
@@ -360,7 +360,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
         ))}
       </div>
 
-      {how && <HowTo onClose={() => setHow(false)} />}
+      {how && <HowTo onClose={() => setHow(false)} onLog={() => setShowLog(true)} />}
       {showLog && (
         <div className="modal" onClick={() => setShowLog(false)}>
           <div className="dialog howto" onClick={(e) => e.stopPropagation()}>
@@ -466,11 +466,14 @@ function Result({ s, onExit }: { s: State; onExit: () => void }) {
           </div>
         )}
         <p>のんだ口数　{s.names[0]} {s.drinks[0]} ／ {s.names[1]} {s.drinks[1]}</p>
-        <div className={`roulette ${spin}`}>
-          <small>{who} の罰ゲーム</small>
-          <b>{spin === 'idle' ? '？？？' : PUNISH[pi]}</b>
-        </div>
-        {spin === 'idle' && <button type="button" onClick={() => setSpin('spinning')}>罰ゲームルーレット</button>}
+        {spin === 'idle' ? (
+          <button type="button" className="ghostbtn" onClick={() => setSpin('spinning')}>{who} の罰ゲームルーレット</button>
+        ) : (
+          <div className={`roulette ${spin}`}>
+            <small>{who} の罰ゲーム</small>
+            <b>{PUNISH[pi]}</b>
+          </div>
+        )}
         <button type="button" className="big" onClick={onExit}>もう一度</button>
       </div>
     </div>
