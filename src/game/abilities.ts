@@ -65,7 +65,7 @@ export const ACTIONS: Action[] = [
     },
   },
   // ---- 枚数・口数
-  { id: 'draw', unit: 'count', range: [1, 2, 1], text: (v, f) => `${f ? '相手' : '自分'}がカードを ${v} 枚引く`, run: (c, v, f) => draw(c.s, good(c, f), v) },
+  { id: 'draw', unit: 'count', range: [1, 2, 1], text: (v, f) => `${f ? '相手' : '自分'}がカードを ${v} 枚引く`, run: (c, v, f) => draw(c.s, good(c, f), v, true) },
   {
     id: 'discard', unit: 'count', range: [1, 2, 1],
     text: (v, f) => `${f ? '自分' : '相手'}の手札をランダムに ${v} 枚捨てる`,

@@ -21,7 +21,7 @@ export const CORE_TEXT: Record<TrapCore, string> = {
   mirrorDamage: '受けたダメージと同じ数を相手にも与える',
   healFull: 'LP を 2000 まで回復する',
   wipeFoe: '相手の場のカードをすべて破壊する',
-  draw3: 'カードを 3 枚引く',
+  draw2: 'カードを 2 枚引く',
 };
 
 /** きっかけごとに選べる効果 */
@@ -30,7 +30,7 @@ export const CORES_FOR: Record<TrapTrigger, TrapCore[]> = {
   direct: ['negateAttack', 'reflectAttacker', 'halveAttacker'],
   summon: ['negateSummon', 'destroySummoned'],
   hurt: ['healHalf', 'mirrorDamage'],
-  low: ['healFull', 'wipeFoe', 'draw3'],
+  low: ['healFull', 'wipeFoe', 'draw2'],
 };
 
 export function trapText(c: Card): string {
@@ -90,8 +90,8 @@ export function fireTrap(s: State, defender: P, trigger: TrapTrigger, info: Trap
     case 'wipeFoe':
       fieldCards(s, foe(defender)).forEach((x) => destroyAt(s, foe(defender), x.slot));
       break;
-    case 'draw3':
-      draw(s, defender, 3);
+    case 'draw2':
+      draw(s, defender, 2, true);
       break;
   }
   s.grave[defender].push(card);

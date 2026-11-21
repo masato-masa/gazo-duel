@@ -26,7 +26,7 @@ export type TrapCore =
   | 'negateAttack' | 'destroyAttacker' | 'reflectAttacker' | 'halveAttacker'
   | 'negateSummon' | 'destroySummoned'
   | 'healHalf' | 'mirrorDamage'
-  | 'healFull' | 'wipeFoe' | 'draw3';
+  | 'healFull' | 'wipeFoe' | 'draw2';
 
 export interface Card {
   id: string;

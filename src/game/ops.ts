@@ -69,11 +69,15 @@ export function setLp(s: State, p: P, n: number): void {
   checkWin(s);
 }
 
-/** デッキが無いのに引くと負け（遊戯王と同じ） */
-export function draw(s: State, p: P, n: number): void {
+/**
+ * デッキが無いのに引くと負け（遊戯王と同じ）。ただし効果で引くとき（effect）は、デッキが空なら引けないだけで負けない。
+ * 10 枚のデッキだと、引く効果のせいで 4 試合に 1 試合がデッキ切れで終わっていた（2026-11-22 の測定）ため。
+ */
+export function draw(s: State, p: P, n: number, effect = false): void {
   for (let i = 0; i < n && s.winner === null; i++) {
     const c = s.deck[p].shift();
     if (!c) {
+      if (effect) return;
       s.winner = foe(p);
       log(s, `${s.names[p]} はデッキ切れ。${s.names[foe(p)]} の勝ち！`);
       return;
