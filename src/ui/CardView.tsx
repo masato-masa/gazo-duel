@@ -94,3 +94,23 @@ export function TrapBack({ c, mine }: { c: Card | null; mine: boolean }) {
     </div>
   );
 }
+
+/** カードを拡大して全文を出す。小さい手札・説明欄で読み切れない罠の長い文のため。どこをタップしても閉じる。 */
+export function CardZoom({ c, onClose }: { c: Card; onClose: () => void }) {
+  return (
+    <div className="zoom" role="dialog" aria-label={`${c.name}の詳細`} onClick={onClose}>
+      <div className={`zoomcard ${c.kind} ${tier(c.base)}`}>
+        <div className="zhead">
+          <span className="zname">{c.name}</span>
+          {c.kind === 'trap' ? <span className="trapmark">罠</span> : <span className="zpow">{c.power}</span>}
+        </div>
+        <div className="zart">
+          <Art c={c} />
+        </div>
+        <div className="ztext">{cardEffectText(c)}</div>
+        <div className="zwords">近かった言葉：{c.words.map(nounOf).join('・')}</div>
+        <div className="zclose">タップで閉じる</div>
+      </div>
+    </div>
+  );
+}

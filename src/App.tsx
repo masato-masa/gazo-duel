@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { cpuAct } from './game/ai';
-import { cardEffectText, cardFromEmbedding, nounOf, randomCard } from './game/cardgen';
+import { cardEffectText, cardFromEmbedding, randomCard } from './game/cardgen';
 import { answerPrompt, attack, canAttack, canSetTrap, canSummon, endTurn, newGame, setTrap, summon } from './game/engine';
 import { fieldCards } from './game/ops';
 import type { Card, P, State } from './game/types';
 import { embedImage, loadClip } from './clip';
 import { listDecks, removeDeck, saveDeck, thumbnail, type SavedDeck } from './deckStore';
-import { Art, FieldCard, FullCard, TrapBack } from './ui/CardView';
+import { Art, CardZoom, FieldCard, FullCard, TrapBack } from './ui/CardView';
 import { buzz, isMuted, setMuted, sfx } from './ui/sound';
 import { useFx } from './ui/useFx';
 import './App.css';
@@ -179,6 +179,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
   const fx = useFx(s, tick);
   const [sel, setSel] = useState<{ kind: 'hand' | 'field'; i: number } | null>(null);
   const [look, setLook] = useState<Card | null>(null);
+  const [zoom, setZoom] = useState<Card | null>(null);
   // 幕は「この番の人がまだ手札を見ると押していない」ときに、描画と同時に出す（ターンが替わった 1 コマに次の人の手札が映らないように）
   const [acked, setAcked] = useState<P | null>(null);
   const curtain = !vsCpu && acked !== s.turn;
@@ -276,6 +277,7 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
 
   return (
     <div className={`duel${fx.shake ? ' shake' : ''}${s.winner !== null ? ' koing' : ''}`}>
+      {zoom && <CardZoom c={zoom} onClose={() => setZoom(null)} />}
       <div className={`info foe-info${s.turn === you ? ' active' : ''}`}>
         <div className="who"><b>{s.names[you]}</b><span>手札 {s.hand[you].length}・山 {s.deck[you].length}・🍺{s.drinks[you]}</span></div>
         <LpBar lp={s.lp[you]} />
@@ -331,11 +333,11 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
         <LpBar lp={s.lp[me]} />
         {floatsOf(me).map((f) => <span key={f.key} className={`float ${f.tone}`}>{f.text}</span>)}
       </div>
-      <div className="look" onClick={() => setLook(null)}>
+      <div className="look" onClick={() => (look ? setZoom(look) : undefined)}>
         {look ? (
           <>
             <b>{look.name}</b>{look.kind === 'monster' ? `（戦闘力 ${look.power}）` : '（罠）'}
-            <span className="lookwords">　{look.words.map(nounOf).join('・')}</span><br />
+            <span className="lookwords">　拡大 ⤢</span><br />
             {cardEffectText(look)}
           </>
         ) : (

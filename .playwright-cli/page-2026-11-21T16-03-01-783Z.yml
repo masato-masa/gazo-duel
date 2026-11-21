@@ -1,0 +1,55 @@
+- generic [ref=e31]:
+  - generic [ref=e32]:
+    - generic [ref=e33]:
+      - generic [ref=e34]: プレイヤー2
+      - generic [ref=e35]: 手札 3・山 7・🍺0
+    - generic [ref=e36]: "4000"
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - generic [ref=e49]: プレイヤー1 のターン
+      - generic [ref=e50]: 手札を選んで出す（攻撃はまだ）
+    - generic [ref=e51]:
+      - button "ターン終了" [ref=e52]
+      - button "ログ" [ref=e53]: 📜
+      - button "あそびかた" [ref=e54]: ？
+      - button "音" [ref=e55]: 🔇
+  - generic [ref=e64]:
+    - generic [ref=e65]:
+      - generic [ref=e66]: ▶ プレイヤー1
+      - generic [ref=e67]: 山 7・🍺0・出せる
+    - generic [ref=e68]: "4000"
+  - generic [ref=e71]: カードをタップすると、効果の説明が出ます
+  - generic [ref=e72]:
+    - button "ハトの空飛ぶ唐辛子 0 【出したとき】お酒を飲んでもよい（1 口につき +200、最大 3 口） ▶ このカードの戦闘力 +600" [ref=e73] [cursor=pointer]:
+      - generic [ref=e74]: ハトの空飛ぶ唐辛子
+      - generic [ref=e76]:
+        - img [aria-hidden] [ref=e77]:
+          - generic [ref=e91]: 唐辛子
+        - generic [ref=e92]: "0"
+      - generic [ref=e93]: 【出したとき】お酒を飲んでもよい（1 口につき +200、最大 3 口） ▶ このカードの戦闘力 +600
+    - button "チャーハンとローラースケートの締め切り 100 【出したとき】じゃんけんに勝てば 2 倍、負ければ不発で 1 口のむ ▶ 相手の手札をランダムに 1 枚捨てる" [ref=e94] [cursor=pointer]:
+      - generic [ref=e95]: チャーハンとローラースケートの締め切り
+      - generic [ref=e97]:
+        - img [aria-hidden] [ref=e98]:
+          - generic [ref=e112]: 締め切
+        - generic [ref=e113]: "100"
+      - generic [ref=e114]: 【出したとき】じゃんけんに勝てば 2 倍、負ければ不発で 1 口のむ ▶ 相手の手札をランダムに 1 枚捨てる
+    - button "像と消防士の灯台 1900 【出したとき】名前を早口で 3 回言う。噛んだら不発で 1 口のむ ▶ 互いの手札を全部入れ替える" [ref=e115] [cursor=pointer]:
+      - generic [ref=e116]: 像と消防士の灯台
+      - generic [ref=e118]:
+        - img [aria-hidden] [ref=e119]:
+          - generic [ref=e133]: 灯台
+        - generic [ref=e134]: "1900"
+      - generic [ref=e135]: 【出したとき】名前を早口で 3 回言う。噛んだら不発で 1 口のむ ▶ 互いの手札を全部入れ替える
+  - generic [ref=e137]:
+    - paragraph [ref=e138]: プレイヤー1 の番です
+    - paragraph [ref=e139]: 端末を プレイヤー1 に渡してください。相手に手札を見せないように。
+    - generic [ref=e140]:
+      - generic [ref=e141]:
+        - text: プレイヤー1
+        - generic [ref=e142]: "4000"
+      - generic [ref=e143]:
+        - text: プレイヤー2
+        - generic [ref=e144]: "4000"
+    - paragraph
+    - button "手札を見る" [ref=e145]
