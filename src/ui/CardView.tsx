@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { abilityIcon } from './abilityIcon';
 import iconTrap from '../assets/icon-trap.png';
 import { cardEffectText, hashStr, nounOf } from '../game/cardgen';
 import type { Card, Snap } from '../game/types';
@@ -65,7 +66,7 @@ export function FullCard({ c, big, selected, onClick }: { c: Card; big?: boolean
         <Art c={c} />
         {c.kind === 'monster' && <div className="powbadge">{c.power}</div>}
       </div>
-      <div ref={tx} className={`ftext${cut ? ' cut' : ''}`}>{cardEffectText(c)}</div>
+      <div ref={tx} className={`ftext${cut ? ' cut' : ''}`}>{c.ability && <img className="aico" src={abilityIcon(c.ability.action)} alt="" />}{cardEffectText(c)}</div>
       {c.base >= 1500 && c.kind === 'monster' && <div className="holo" />}
     </button>
   );
@@ -93,7 +94,7 @@ export function CardZoom({ c, onClose }: { c: Card; onClose: () => void }) {
         <div className="zart">
           <Art c={c} />
         </div>
-        <div className="ztext">{cardEffectText(c)}</div>
+        <div className="ztext">{c.ability && <img className="aico big" src={abilityIcon(c.ability.action)} alt="" />}{cardEffectText(c)}</div>
         <div className="zwords">近かった言葉：{c.words.map(nounOf).join('・')}</div>
         <div className="zclose">タップで閉じる</div>
       </div>
