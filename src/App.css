@@ -219,3 +219,7 @@ button:disabled { opacity: .4; }
   body > * { visibility: hidden; }
   body::after { content: '↻  スマホを たてに してね'; position: fixed; inset: 0; display: grid; place-items: center; background: #1b1230; color: #ffd86b; font-size: 18px; font-weight: 700; z-index: 9999; }
 }
+
+/* ---- カード枠（ChatGPT で作った金の飾り枠。scripts/build-frame.mjs） ---- */
+.full::before, .fcard::before { content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; border: 11px solid transparent; border-image: url('./assets/card-frame.png') 44 / 11px stretch; }
+.full.trap::before, .fcard.trap::before { filter: hue-rotate(235deg) saturate(.9) brightness(1.05); }
