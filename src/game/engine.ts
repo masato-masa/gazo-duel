@@ -16,10 +16,20 @@ function shuffle<T>(s: State, a: T[]): T[] {
   return a;
 }
 
+/** 確認用: URL に ?lp=300 を付けると、その LP から始まる（試合を短くして結果画面を見るため。100〜4000 のときだけ効く） */
+function startLp(): number {
+  try {
+    const v = Number(new URLSearchParams(globalThis.location?.search ?? '').get('lp'));
+    return v >= 100 && v <= START_LP ? Math.round(v) : START_LP;
+  } catch {
+    return START_LP;
+  }
+}
+
 export function newGame(decks: [DeckInput, DeckInput], seed: number): State {
   const s: State = {
     names: [decks[0].name, decks[1].name],
-    lp: [START_LP, START_LP],
+    lp: [startLp(), startLp()],
     deck: [[], []],
     hand: [[], []],
     field: [Array(SLOTS).fill(null), Array(SLOTS).fill(null)],

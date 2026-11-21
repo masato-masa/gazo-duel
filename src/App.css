@@ -82,7 +82,7 @@ button:disabled { opacity: .4; }
 .fcard.done { filter: saturate(.5) brightness(.8); }
 .fcard.hi { border-color: #ffd86b; box-shadow: 0 0 14px #ffb400aa, 0 4px 10px #0008; }
 .fcard.lo { border-color: #8a8a99; }
-.art-img, .art-svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.art-img, .art-svg, .art-gen { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .fname { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 4px 3px; font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; background: linear-gradient(transparent, #000c 40%); text-shadow: 0 1px 2px #000; max-height: 5.6em; overflow: hidden; }
 .fpow { position: absolute; top: 4px; right: 4px; min-width: 40px; padding: 2px 6px; border-radius: 12px; background: radial-gradient(#ffe27a, #e08a00); color: #3a2100; font-weight: 900; font-size: 15px; text-align: center; border: 2px solid #fff8; box-shadow: 0 2px 4px #0008; }
 .fcard.lo .fpow { background: radial-gradient(#cfcfd8, #8a8a99); }
@@ -188,7 +188,7 @@ button:disabled { opacity: .4; }
 @keyframes kozoom { to { transform: scale(1.04); filter: saturate(.4) contrast(1.15); } }
 .result { max-width: 340px; }
 .mvp { display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; margin: 10px 0; text-align: center; }
-.mvp .mvpcard { width: 120px; height: 160px; border-radius: 10px; overflow: hidden; border: 2px solid #ffd86b; box-shadow: 0 0 16px #ffb400aa; flex: none; }
+.mvp .mvpcard { position: relative; width: 120px; height: 160px; border-radius: 10px; overflow: hidden; border: 2px solid #ffd86b; box-shadow: 0 0 16px #ffb400aa; flex: none; }
 .mvp .mvpcard > * { width: 100%; height: 100%; object-fit: cover; }
 .mvp small { display: block; color: #ffd86b; font-weight: 800; letter-spacing: 2px; }
 .mvp b { display: block; font-size: 20px; }
@@ -230,3 +230,7 @@ button:disabled { opacity: .4; }
 .ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 3px; object-fit: contain; }
 .ico.big { width: 22px; height: 22px; vertical-align: -5px; }
 .trapmark img { width: 15px; height: 15px; display: block; }
+
+.art-gen::after { content: attr(data-g); position: absolute; inset: 0; display: grid; place-items: center; font-family: sans-serif; font-weight: 800; font-size: 50cqmin; color: #fff; -webkit-text-stroke: 1px #0006; paint-order: stroke fill; text-shadow: 0 1px 3px #0008; white-space: nowrap; }
+.art-gen.long::after { font-size: 38cqmin; }
+.fart, .fcard, .zart, .mvpcard { container-type: size; }
