@@ -28,15 +28,32 @@ function ac(): AudioContext | null {
   }
 }
 
+let bus: DynamicsCompressorNode | null = null;
+/** 効果音の出口。重なった音の割れと急な大音量をコンプレッサで抑える。 */
+function out(c: AudioContext): AudioNode {
+  if (!bus) {
+    bus = c.createDynamicsCompressor();
+    bus.threshold.value = -14;
+    bus.knee.value = 12;
+    bus.ratio.value = 4;
+    bus.attack.value = 0.003;
+    bus.release.value = 0.15;
+    bus.connect(c.destination);
+  }
+  return bus;
+}
+
 function tone(c: AudioContext, t0: number, f0: number, f1: number, dur: number, type: OscillatorType, vol: number): void {
   const o = c.createOscillator();
   const g = c.createGain();
   o.type = type;
   o.frequency.setValueAtTime(f0, t0);
   o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + dur);
-  g.gain.setValueAtTime(vol, t0);
+  // 立ち上がり 4ms。0 から始めるとプチッとクリックが乗る。
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol, t0 + 0.004);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  o.connect(g).connect(c.destination);
+  o.connect(g).connect(out(c));
   o.start(t0);
   o.stop(t0 + dur + 0.02);
 }
@@ -53,15 +70,21 @@ function noise(c: AudioContext, t0: number, dur: number, vol: number, hp = 200):
   f.frequency.value = hp;
   const g = c.createGain();
   g.gain.value = vol;
-  src.connect(f).connect(g).connect(c.destination);
+  src.connect(f).connect(g).connect(out(c));
   src.start(t0);
 }
 
 export type Sfx = 'summon' | 'attack' | 'damage' | 'heal' | 'destroy' | 'trap' | 'drink' | 'ability' | 'win' | 'tap' | 'ko';
 
+const lastAt = new Map<Sfx, number>();
+
 export function sfx(kind: Sfx): void {
   const c = ac();
   if (!c) return;
+  // 連打で同じ音が 40ms 以内に重なると濁るので間引く。
+  const now = performance.now();
+  if (now - (lastAt.get(kind) ?? -1e9) < 40) return;
+  lastAt.set(kind, now);
   const t = c.currentTime;
   switch (kind) {
     case 'tap':
