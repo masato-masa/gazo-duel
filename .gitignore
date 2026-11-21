@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .gh-pages
 assets-src/
+
+.playwright-cli/
