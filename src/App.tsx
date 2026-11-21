@@ -334,9 +334,9 @@ function Duel({ initial, vsCpu, onExit }: { initial: State; vsCpu: boolean; onEx
       <div className="look" onClick={() => setLook(null)}>
         {look ? (
           <>
-            <b>{look.name}</b>{look.kind === 'monster' ? `（戦闘力 ${look.power}）` : '（罠）'}<br />
+            <b>{look.name}</b>{look.kind === 'monster' ? `（戦闘力 ${look.power}）` : '（罠）'}
+            <span className="lookwords">　{look.words.map(nounOf).join('・')}</span><br />
             {cardEffectText(look)}
-            <br /><span className="lookhint">画像に近かった言葉：{look.words.map(nounOf).join('・')}</span>
           </>
         ) : (
           <span className="lookhint">{recentLog(s, 3) || 'カードをタップすると、効果の説明が出ます'}</span>

@@ -147,6 +147,7 @@ button:disabled { opacity: .4; }
 /* ---- 手札の詳細・ダイアログ ---- */
 .look { white-space: pre-line; flex: none; height: 92px; overflow-y: auto; background: #0b0518cc; border: 1.5px solid #b98cff66; border-radius: 10px; padding: 6px 10px; font-size: 12.5px; line-height: 1.45; }
 .lookhint { opacity: .8; }
+.lookwords { opacity: .65; font-size: 11px; }
 .look b { color: #ffd86b; font-size: 13px; }
 .modal { position: fixed; inset: 0; background: #000b; display: grid; place-content: center; z-index: 40; padding: 16px; animation: fadein .2s; }
 @keyframes fadein { from { opacity: 0; } }
