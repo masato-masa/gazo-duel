@@ -28,7 +28,7 @@ export const CORE_TEXT: Record<TrapCore, string> = {
 export const CORES_FOR: Record<TrapTrigger, TrapCore[]> = {
   attack: ['negateAttack', 'destroyAttacker', 'reflectAttacker', 'halveAttacker'],
   direct: ['negateAttack', 'reflectAttacker', 'halveAttacker'],
-  summon: ['negateSummon', 'destroySummoned'],
+  summon: ['negateSummon', 'negateSummon', 'destroySummoned'], // 強い destroySummoned は 1/3 に（勝率 63% だったため。2026-11-22）
   hurt: ['healHalf', 'mirrorDamage'],
   low: ['healFull', 'wipeFoe', 'draw2'],
 };

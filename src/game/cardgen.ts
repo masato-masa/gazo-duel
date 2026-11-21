@@ -119,6 +119,8 @@ export function cardName(head: Word, rest: Word[]): string {
 
 const TRAP_BONUS = ['heal', 'damage', 'draw', 'drinkFoe', 'powerDown', 'discard'];
 
+const FLIP_BIAS: Record<string, number> = { destroy: 0.4, steal: 0.35, powerUp: 0.28, poison: 0.28 };
+
 function rollAbility(rnd: () => number, w1: Word, w2: Word, allowed?: string[]): Ability {
   const pool = allowed ? ACTIONS.filter((a) => allowed.includes(a.id)) : ACTIONS;
   const mapped = MEANING[w1.en];
@@ -127,7 +129,8 @@ function rollAbility(rnd: () => number, w1: Word, w2: Word, allowed?: string[]):
   let n = min + step * Math.floor(rnd() * ((max - min) / step + 1));
   if (act.unit === 'lp') n = Math.max(min, Math.round((n * EFFECT_SCALE) / 100) * 100);
 
-  const flip = UNLUCKY.has(w2.en) || rnd() < 0.15;
+  // 強すぎた動作は、向きが反転しやすくする（自分に返る・相手が得する）。2026-11-22 の測定で勝率が 57〜60% だったもの。
+  const flip = UNLUCKY.has(w2.en) || rnd() < (FLIP_BIAS[act.id] ?? 0.15);
 
   let scale: Scale = 'flat';
   let per = 0;

@@ -33,7 +33,7 @@ button:disabled { opacity: .4; }
 @keyframes shake { 0%,100% { transform: none; } 15% { transform: translate(-7px, 3px); } 30% { transform: translate(6px, -4px); } 45% { transform: translate(-5px, -2px); } 60% { transform: translate(4px, 3px); } 80% { transform: translate(-2px, 1px); } }
 
 .info { display: flex; align-items: center; gap: 10px; position: relative; min-height: 34px; }
-.who { display: flex; flex-direction: column; font-size: 11px; line-height: 1.2; min-width: 96px; }
+.who { display: flex; flex-direction: column; font-size: 12px; line-height: 1.2; min-width: 96px; }
 .who b { font-size: 14px; }
 .who span { opacity: .75; }
 .lpbar { position: relative; flex: 1; height: 26px; border-radius: 13px; background: #130b26; border: 2px solid #5b49a0; overflow: hidden; }
@@ -55,7 +55,8 @@ button:disabled { opacity: .4; }
 @keyframes pulse { 50% { background: #c79bff44; } }
 .trapback { position: absolute; inset: 0; display: grid; background: url('./assets/trap-back.webp') center / cover; place-content: center; font-size: 11px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px #000;
   border: 1.5px solid #b98cff; border-radius: 6px; padding: 0 3px; text-align: center; overflow: hidden; }
-.trapback.mine { font-size: 9px; text-shadow: 0 1px 3px #000, 0 0 6px #000; }
+.trapback.mine { font-size: 11px; line-height: 1.1; text-shadow: 0 1px 3px #000, 0 0 6px #000; }
+.trapback span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 .field { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr; gap: 6px; flex: 1 1 0; min-height: 0; }
 .slot { border: 2px solid #8f7ae044; border-radius: 12px; min-width: 0; min-height: 0; position: relative; background: radial-gradient(ellipse at center, #b99cff1c, #0b051866); box-shadow: inset 0 0 18px #0008, 0 0 0 1px #0006; }

@@ -1,9 +1,12 @@
 // CPU 同士で N 試合して、カードの特徴ごとの「使われた割合」と「使われた試合の勝率」を出す。偏りの測定用。
-//   npx tsx scripts/sim-cards.mts [試合数]
+//   npx tsx scripts/sim-cards.mts [試合数] [--no-recycle]
 // 使われた = 試合の終わりに場・罠・墓地のどこかにある。勝率は 50% が基準（同じ強さの 2 人なので）。
 import { cpuAct } from '../src/game/ai.ts';
 import { randomCard } from '../src/game/cardgen.ts';
 import { newGame } from '../src/game/engine.ts';
+import { RULES } from '../src/game/ops.ts';
+
+RULES.recycle = !process.argv.includes('--no-recycle');
 import type { Card } from '../src/game/types.ts';
 
 const N = Number(process.argv[2] ?? 1500);
@@ -22,6 +25,9 @@ const bump = (table: string, key: string, played: boolean, win: boolean): void =
 const powerBin = (p: number): string => `${String(Math.floor(p / 500) * 500).padStart(4, '0')}-${Math.floor(p / 500) * 500 + 499}`;
 
 let done = 0;
+let deckOut = 0;
+let first = 0;
+const turns: number[] = [];
 for (let g = 0; g < N; g++) {
   const mk = (k: number) => ({ name: `P${k}`, cards: Array.from({ length: 10 }, (_, i) => randomCard(g * 100 + k * 10 + i, `c${i}`)) });
   const decks = [mk(0), mk(1)];
@@ -30,6 +36,9 @@ for (let g = 0; g < N; g++) {
   while (s.winner === null && guard++ < 6000) if (!(cpuAct(s, 0) || cpuAct(s, 1))) break;
   if (s.winner === null || s.winner === 'draw') continue;
   done++;
+  turns.push(s.turnNo);
+  if (s.winner === 0) first++;
+  if (s.lp[s.winner === 0 ? 1 : 0] > 0) deckOut++;
   for (const p of [0, 1] as const) {
     const used = new Set<string>();
     for (const c of [...s.field[p], ...s.traps[p], ...s.grave[p]]) if (c) used.add(c.id);
@@ -46,7 +55,9 @@ for (let g = 0; g < N; g++) {
     }
   }
 }
-console.log(`試合 ${N}（決着 ${done}）`);
+turns.sort((a, b) => a - b);
+console.log(`規則: ${RULES.recycle ? '切れたら墓地を戻す' : '現行（切れたら負け）'}`);
+console.log(`試合 ${N}（決着 ${done}）  デッキ切れ終了 ${((deckOut / done) * 100).toFixed(1)}%  ターン 中央値 ${turns[Math.floor(done / 2)]}・90% ${turns[Math.floor(done * 0.9)]}・最長 ${turns[done - 1]}  P0 勝率 ${((first / done) * 100).toFixed(1)}%`);
 for (const [name, m] of Object.entries(tables)) {
   console.log(`\n[${name}]  特徴  枚数  使われた%  使われた試合の勝率%`);
   const rows = [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]));

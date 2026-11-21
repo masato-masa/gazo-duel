@@ -73,8 +73,23 @@ export function setLp(s: State, p: P, n: number): void {
  * デッキが無いのに引くと負け（遊戯王と同じ）。ただし効果で引くとき（effect）は、デッキが空なら引けないだけで負けない。
  * 10 枚のデッキだと、引く効果のせいで 4 試合に 1 試合がデッキ切れで終わっていた（2026-11-22 の測定）ため。
  */
+/**
+ * 規則の切り替え（測定用）。recycle: ターンの通常のドローでデッキが切れたら墓地を混ぜて戻す（墓地も空なら負け）。
+ * 2026-11-22 の比較（1000 戦）: 現行はデッキ切れ終了 22.8%・先手 52.2%、戻す案は 1.2%・49.1%（中央値 7 は同じ、90% 12→14、最長 18→49）。戻す案を採用。
+ */
+export const RULES = { recycle: true };
+
 export function draw(s: State, p: P, n: number, effect = false): void {
   for (let i = 0; i < n && s.winner === null; i++) {
+    if (RULES.recycle && !effect && s.deck[p].length === 0 && s.grave[p].length > 0) {
+      const back = s.grave[p].splice(0);
+      for (let k = back.length - 1; k > 0; k--) {
+        const j = Math.floor(rand(s) * (k + 1));
+        [back[k], back[j]] = [back[j]!, back[k]!];
+      }
+      s.deck[p] = back;
+      log(s, `${s.names[p]} は墓地をデッキに戻した`);
+    }
     const c = s.deck[p].shift();
     if (!c) {
       if (effect) return;

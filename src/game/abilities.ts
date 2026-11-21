@@ -38,7 +38,7 @@ export const ACTIONS: Action[] = [
   { id: 'heal', unit: 'lp', range: [300, 1500, 100], text: (v, f) => `${f ? '相手' : '自分'}の LP を ${v} 回復`, run: (c, v, f) => heal(c.s, good(c, f), v) },
   { id: 'damage', unit: 'lp', range: [300, 1500, 100], text: (v, f) => `${f ? '自分' : '相手'}に ${v} ダメージ`, run: (c, v, f) => damage(c.s, bad(c, f), v) },
   {
-    id: 'powerUp', unit: 'lp', range: [300, 1500, 100],
+    id: 'powerUp', unit: 'lp', range: [300, 1200, 100],
     text: (v, f) => `${f ? '相手の場でいちばん強いカード' : 'このカード'}の戦闘力 +${v}`,
     run: (c, v, f) => {
       const t = f ? strongest(fieldCards(c.s, foe(c.me)))?.card : c.card;
@@ -51,7 +51,7 @@ export const ACTIONS: Action[] = [
     run: (c, v, f) => fieldCards(c.s, bad(c, f)).forEach((x) => addPower(x.card, -v)),
   },
   {
-    id: 'poison', unit: 'lp', range: [100, 500, 100],
+    id: 'poison', unit: 'lp', range: [100, 400, 100],
     text: (v, f) => `${f ? '自分' : '相手'}のターン開始時、3 回 ${v} ダメージ`,
     run: (c, v, f) => {
       c.s.poison[bad(c, f)] = { n: v, t: 3 };
