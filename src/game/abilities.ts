@@ -104,9 +104,9 @@ export const ACTIONS: Action[] = [
   },
   {
     id: 'bargain', unit: 'count', range: [1, 3, 1],
-    text: (v, f) => `LP ${v * 300} をはらって、${f ? '自分' : '相手'}が ${v} 口のむ`,
+    text: (v, f) => `LP ${v * 200} をはらって、${f ? '自分' : '相手'}が ${v} 口のむ`,
     run: (c, v, f) => {
-      damage(c.s, c.me, v * 300);
+      damage(c.s, c.me, v * 200);
       drink(c.s, bad(c, f), v);
     },
   },
