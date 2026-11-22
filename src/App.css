@@ -257,3 +257,19 @@ button:disabled { opacity: .4; }
   .full { height: 160px; }
   .fart { height: 46px; }
 }
+
+/* ---- とても小さい画面（高さ 600px 以下、320×568 など）---- */
+@media (max-height: 600px) {
+  .duel { gap: 3px; padding: 3px 8px; }
+  .info { min-height: 24px; }
+  .who b { font-size: 12px; }
+  .who { min-width: 74px; }
+  .lpbar { height: 20px; }
+  .lpbar b { line-height: 16px; font-size: 13px; }
+  .traprow { height: 22px; }
+  .look { height: 44px; padding: 2px 8px; font-size: 11.5px; line-height: 1.3; }
+  .nexthint { font-size: 13px; line-height: 1.3; }
+  .hand { min-height: 150px; padding: 8px 2px 2px; }
+  .full { height: 136px; }
+  .fart { height: 34px; }
+}
