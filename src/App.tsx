@@ -6,7 +6,7 @@ import { cardEffectText, cardFromEmbedding, randomCard } from './game/cardgen';
 import { answerPrompt, attack, canAttack, canSetTrap, canSummon, endTurn, newGame, setTrap, summon } from './game/engine';
 import { fieldCards } from './game/ops';
 import type { Card, P, State } from './game/types';
-import { embedImage, loadClip } from './clip';
+import { clipProgress, embedImage, loadClip, prefetchClip } from './clip';
 import { listDecks, removeDeck, saveDeck, thumbnail, type SavedDeck } from './deckStore';
 import { Art, CardZoom, FieldCard, FullCard, TrapBack } from './ui/CardView';
 import { buzz, isMuted, setMuted, sfx } from './ui/sound';
@@ -89,7 +89,7 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
           {seats[i].kind === 'images' && (
             <label className={`file${seats[i].files.length === DECK ? ' ok' : ''}`} style={{ '--p': `${(seats[i].files.length / DECK) * 100}%` } as React.CSSProperties}>
               {seats[i].files.length === DECK ? `✓ ${DECK} 枚そろった（選びなおす）` : `画像を選ぶ　${seats[i].files.length} / ${DECK} 枚`}
-              <input type="file" accept="image/*" multiple onChange={(e) => set(i, { files: Array.from(e.target.files ?? []).slice(0, DECK) })} />
+              <input type="file" accept="image/*" multiple onChange={(e) => { prefetchClip(); set(i, { files: Array.from(e.target.files ?? []).slice(0, DECK) }); }} />
             </label>
           )}
         </section>
@@ -104,12 +104,13 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
   );
 }
 
-function Loading({ text, ratio }: { text: string; ratio: number }) {
+function Loading({ text, ratio, detail }: { text: string; ratio: number; detail?: string }) {
   return (
     <div className="loading">
       <div className="spin" />
       <p>{text}</p>
       <div className="bar"><i style={{ width: `${Math.round(ratio * 100)}%` }} /></div>
+      {detail && <small className="loaddetail">{detail}</small>}
     </div>
   );
 }
@@ -500,7 +501,7 @@ function Ghost({ g }: { g: { card: Parameters<typeof Art>[0]['c'] } }) {
 export default function App() {
   const [screen, setScreen] = useState<'setup' | 'loading' | 'duel'>('setup');
   const [game, setGame] = useState<{ state: State; vsCpu: boolean } | null>(null);
-  const [load, setLoad] = useState({ text: '', ratio: 0 });
+  const [load, setLoad] = useState<{ text: string; ratio: number; detail?: string }>({ text: '', ratio: 0 });
   const [error, setError] = useState('');
 
   const start = async (seats: [Seat, Seat]) => {
@@ -509,9 +510,10 @@ export default function App() {
     try {
       const seed = Math.floor(Math.random() * 1e9);
       if (seats.some((s) => s.kind === 'images')) {
-        const msg = '分析用のモデルを読み込み中…（初回だけ時間がかかります）';
-        setLoad({ text: msg, ratio: 0 });
-        await loadClip((r) => setLoad({ text: msg, ratio: r }));
+        const msg = clipProgress.ready ? '分析の準備ができています' : '分析用のモデルを読み込み中…（初回だけ。2 回目からは速い）';
+        const detail = (): string => (clipProgress.totalMB > 0 && !clipProgress.ready ? `${clipProgress.loadedMB.toFixed(0)} / ${clipProgress.totalMB.toFixed(0)} MB` : '');
+        setLoad({ text: msg, ratio: clipProgress.ratio, detail: detail() });
+        await loadClip((r) => setLoad({ text: msg, ratio: r, detail: detail() }));
       }
       const decks: Card[][] = [];
       for (let k = 0; k < 2; k++) {
