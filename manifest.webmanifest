@@ -1,0 +1,14 @@
+{
+  "name": "ガゾデュエル",
+  "short_name": "ガゾデュエル",
+  "start_url": "/gazo-duel/",
+  "scope": "/gazo-duel/",
+  "display": "standalone",
+  "background_color": "#1b1230",
+  "theme_color": "#1b1230",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/gazo-duel/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/gazo-duel/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
