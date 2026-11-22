@@ -68,3 +68,35 @@ export async function embedImage(url: string): Promise<Float32Array> {
   n = Math.sqrt(n) || 1;
   return v.map((x) => x / n);
 }
+
+const embedCache = new Map<string, Promise<Float32Array>>();
+const keyOfFile = (f: File): string => `${f.name}:${f.size}:${f.lastModified}`;
+
+/** ファイル 1 枚の分析（同じファイルは 1 度だけ。先読みの結果を本読みが使い回す） */
+export function embedFile(f: File): Promise<Float32Array> {
+  const k = keyOfFile(f);
+  let p = embedCache.get(k);
+  if (!p) {
+    const url = URL.createObjectURL(f);
+    p = embedImage(url).finally(() => URL.revokeObjectURL(url));
+    p.catch(() => embedCache.delete(k));
+    embedCache.set(k, p);
+  }
+  return p;
+}
+
+/**
+ * 画像を選んだ直後に、モデルの準備ができたら 1 枚ずつ分析しておく（画面が固まらないよう、1 枚ごとに少し間をあける）。
+ * 試合を始めるときには、ほとんど済んでいる。
+ */
+export async function prefetchEmbeddings(files: File[]): Promise<void> {
+  try {
+    await loadClip();
+    for (const f of files) {
+      await embedFile(f);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+  } catch {
+    /* 本読みで改めて分析される */
+  }
+}

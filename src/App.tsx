@@ -6,7 +6,7 @@ import { cardEffectText, cardFromEmbedding, randomCard } from './game/cardgen';
 import { answerPrompt, attack, canAttack, canSetTrap, canSummon, endTurn, newGame, setTrap, summon } from './game/engine';
 import { fieldCards } from './game/ops';
 import type { Card, P, State } from './game/types';
-import { clipProgress, embedImage, loadClip, prefetchClip } from './clip';
+import { clipProgress, embedFile, loadClip, prefetchClip, prefetchEmbeddings } from './clip';
 import { listDecks, removeDeck, saveDeck, thumbnail, type SavedDeck } from './deckStore';
 import { Art, CardZoom, FieldCard, FullCard, TrapBack } from './ui/CardView';
 import { buzz, isMuted, setMuted, sfx } from './ui/sound';
@@ -89,7 +89,7 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
           {seats[i].kind === 'images' && (
             <label className={`file${seats[i].files.length === DECK ? ' ok' : ''}`} style={{ '--p': `${(seats[i].files.length / DECK) * 100}%` } as React.CSSProperties}>
               {seats[i].files.length === DECK ? `✓ ${DECK} 枚そろった（選びなおす）` : `画像を選ぶ　${seats[i].files.length} / ${DECK} 枚`}
-              <input type="file" accept="image/*" multiple onChange={(e) => { prefetchClip(); set(i, { files: Array.from(e.target.files ?? []).slice(0, DECK) }); }} />
+              <input type="file" accept="image/*" multiple onChange={(e) => { const fl = Array.from(e.target.files ?? []).slice(0, DECK); prefetchClip(); void prefetchEmbeddings(fl); set(i, { files: fl }); }} />
             </label>
           )}
         </section>
@@ -124,7 +124,7 @@ async function buildDeck(seat: Seat, k: number, seed: number, onStep: (done: num
   const cards: Card[] = [];
   for (let i = 0; i < seat.files.length; i++) {
     const url = URL.createObjectURL(seat.files[i]);
-    cards.push(cardFromEmbedding(await embedImage(url), url, `${k}-${i}`));
+    cards.push(cardFromEmbedding(await embedFile(seat.files[i]!), url, `${k}-${i}`));
     onStep(i + 1);
   }
   // 次からすぐ使えるよう、サムネイルつきで保存する（画像の原本は保存しない）
