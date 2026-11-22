@@ -103,6 +103,28 @@ export const ACTIONS: Action[] = [
     },
   },
   {
+    id: 'bargain', unit: 'count', range: [1, 3, 1],
+    text: (v, f) => `LP ${v * 300} をはらって、${f ? '自分' : '相手'}が ${v} 口のむ`,
+    run: (c, v, f) => {
+      damage(c.s, c.me, v * 300);
+      drink(c.s, bad(c, f), v);
+    },
+  },
+  {
+    id: 'russian', unit: 'count', range: [1, 2, 1],
+    text: (v) => `運しだいで、どちらかが ${v} 口のむ`,
+    run: (c, v) => drink(c.s, rand(c.s) < 0.5 ? c.me : foe(c.me), v),
+  },
+  {
+    id: 'unify', unit: 'none', range: [0, 0, 1],
+    text: () => '自分の場のカードの戦闘力を、いちばん強いカードにそろえる',
+    run: (c) => {
+      const mine = fieldCards(c.s, c.me);
+      const top = strongest(mine);
+      if (top) mine.forEach((x) => (x.card.power = top.card.power));
+    },
+  },
+  {
     id: 'swapField', unit: 'none', range: [0, 0, 1],
     text: () => '自分と相手の場のカードを、全部入れ替える',
     run: (c) => {
@@ -299,7 +321,7 @@ interface CondDef {
   text: (a: Ability, unit: Unit) => string;
 }
 
-const COUNT_WORD: Record<string, string> = { draw: '枚', discard: '枚', mill: '枚', drinkFoe: '口', kanpai: '口' };
+const COUNT_WORD: Record<string, string> = { draw: '枚', discard: '枚', mill: '枚', drinkFoe: '口', kanpai: '口', bargain: '口', russian: '口' };
 const bonusText = (a: Ability, unit: Unit): string => (unit === 'count' ? `1 ${COUNT_WORD[a.action] ?? '枚'}ふえる` : `+${a.condN}`);
 const COND_TEXT: Record<CondKind, CondDef> = {
   none: { text: () => '' },

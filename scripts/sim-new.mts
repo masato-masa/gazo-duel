@@ -1,6 +1,6 @@
 // 新しい動作（乾杯・ギャンブル・場の入れ替え）の偏りの測定。デッキの 2 割のモンスターを新動作に差し替えて CPU 同士で戦わせ、
 // 「使われた%」と「使われた試合の勝率」を、既存の動作（まとめて）と比べる。50% が基準。
-//   npx tsx scripts/sim-new.mts [試合数]
+//   npx tsx scripts/sim-new.mts [試合数] [--second]   （--second: 2 組目の 3 種）
 import { cpuAct } from '../src/game/ai.ts';
 import { randomCard } from '../src/game/cardgen.ts';
 import { abilityText } from '../src/game/abilities.ts';
@@ -8,7 +8,7 @@ import { newGame } from '../src/game/engine.ts';
 import type { Card } from '../src/game/types.ts';
 
 const N = Number(process.argv[2] ?? 1000);
-const NEW = ['kanpai', 'gamble', 'swapField'] as const;
+const NEW = (process.argv.includes('--second') ? ['bargain', 'russian', 'unify'] : ['kanpai', 'gamble', 'swapField']) as readonly string[];
 const rows = new Map<string, { inDeck: number; played: number; win: number; drinks: number }>();
 const bump = (k: string, played: boolean, win: boolean): void => {
   const r = rows.get(k) ?? { inDeck: 0, played: 0, win: 0, drinks: 0 };
@@ -29,7 +29,7 @@ for (let g = 0; g < N; g++) {
       const c = randomCard(g * 100 + k * 10 + i, `c${i}`);
       if (c.kind === 'monster' && ((g * 31 + k * 7 + i * 13) % 10) < 2) {
         const action = NEW[(g + k + i) % 3]!;
-        const n = action === 'kanpai' ? 1 + ((g + i) % 2) : action === 'gamble' ? [300, 500, 700, 900][(g + i) % 4]! : 0;
+        const n = action === 'kanpai' || action === 'russian' ? 1 + ((g + i) % 2) : action === 'bargain' ? 1 + ((g + i) % 3) : action === 'gamble' ? [300, 500, 700, 900][(g + i) % 4]! : 0;
         c.ability = { action, n, flip: false, scale: 'flat', per: 0, cond: 'none', condN: 0 };
       }
       return c;
@@ -49,7 +49,7 @@ for (let g = 0; g < N; g++) {
     for (const [i, c] of (decks[p].cards as Card[]).entries()) {
       if (c.kind !== 'monster') continue;
       const a = c.ability?.action ?? '(なし)';
-      bump((NEW as readonly string[]).includes(a) ? a : '既存の動作（まとめて）', used.has(`${p}-${i}`), s.winner === p);
+      bump(NEW.includes(a) ? a : '既存の動作（まとめて）', used.has(`${p}-${i}`), s.winner === p);
     }
   }
 }

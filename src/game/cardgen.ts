@@ -79,7 +79,7 @@ function weighted<T>(rnd: () => number, items: [T, number][]): T {
 const MEANING: Record<string, string> = {};
 const assign = (action: string, words: string) => words.split(',').forEach((w) => (MEANING[w] = action));
 /** 言葉の割り当てからだけ選ばれる動作（言葉が決まらないときの既定の選び方には入れない。既存のカードの動作を変えないため） */
-const EXTRA_ONLY = new Set(['kanpai', 'gamble', 'swapField']);
+const EXTRA_ONLY = new Set(['kanpai', 'gamble', 'swapField', 'bargain', 'russian', 'unify']);
 assign('heal', 'apple,banana,orange fruit,strawberry,grapes,watermelon,lemon,peach,cherry,pineapple,carrot,tomato,bread,rice,sushi,salad,soup,curry,sandwich,tofu,honey,cake,egg,cheese,pill,bandage,heart,angel,milk,tea,water bottle,juice');
 assign('damage', 'sword,knife,axe,spear,bow and arrow,gun,dagger,hammer,cannon,bomb,saw,needle,scissors,syringe,fire,flame,lightning,explosion,battle,war,anger,tiger,lion,wolf,shark,crocodile,dragon');
 assign('seal', 'shield,armor,helmet,lock,chain,rope,door');
@@ -103,6 +103,9 @@ assign('discard', 'late for work,all nighter,hangover morning,breakup,lie');
 assign('kanpai', 'izakaya,karaoke,karaoke room,barbecue grill,fireworks');
 assign('gamble', 'dice,roulette,slot machine,playing cards');
 assign('swapField', 'tornado,earthquake,carousel,ferris wheel,roller coaster,washing machine,swing');
+assign('bargain', 'wallet,money,coin,handshake,treasure chest,ticket');
+assign('russian', 'lucky cat,drinking game,hourglass,clock');
+assign('unify', 'crowd,flag,school uniform,trophy,medal,crown');
 
 /** 向きが反転しやすい（自分に返る・相手が得する）言葉 */
 const UNLUCKY = new Set(['embarrassment', 'regret', 'late for work', 'breakup', 'all nighter', 'hangover morning', 'monday', 'deadline', 'overtime work', 'hangover', 'boredom', 'rotten', 'cursed', 'curse', 'trap', 'clown', 'zombie', 'ghost']);
