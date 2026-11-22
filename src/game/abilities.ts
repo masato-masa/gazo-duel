@@ -91,6 +91,26 @@ export const ACTIONS: Action[] = [
     },
   },
   { id: 'drinkFoe', unit: 'count', range: [1, 3, 1], text: (v, f) => `${f ? '自分' : '相手'}が ${v} 口のむ`, run: (c, v, f) => drink(c.s, bad(c, f), v) },
+  // ---- 飲み会向けの追加（2026-11-22）。言葉の割り当て（MEANING）からだけ選ばれる
+  { id: 'kanpai', unit: 'count', range: [1, 2, 1], text: (v) => `乾杯！ 2 人とも ${v} 口のむ`, run: (c, v) => { drink(c.s, 0, v); drink(c.s, 1, v); } },
+  {
+    id: 'gamble', unit: 'lp', range: [300, 1200, 100],
+    text: (v, f) => `運しだいで ${f ? '相手' : '自分'}の LP が ${v} 増えるか減る`,
+    run: (c, v, f) => {
+      const p = good(c, f);
+      if (rand(c.s) < 0.5) heal(c.s, p, v);
+      else damage(c.s, p, v);
+    },
+  },
+  {
+    id: 'swapField', unit: 'none', range: [0, 0, 1],
+    text: () => '自分と相手の場のカードを、全部入れ替える',
+    run: (c) => {
+      const mine = c.s.field[c.me];
+      c.s.field[c.me] = c.s.field[foe(c.me)];
+      c.s.field[foe(c.me)] = mine;
+    },
+  },
   // ---- 数を使わない（変な効果）
   {
     id: 'destroy', unit: 'none', range: [0, 0, 1],
@@ -279,7 +299,7 @@ interface CondDef {
   text: (a: Ability, unit: Unit) => string;
 }
 
-const COUNT_WORD: Record<string, string> = { draw: '枚', discard: '枚', mill: '枚', drinkFoe: '口' };
+const COUNT_WORD: Record<string, string> = { draw: '枚', discard: '枚', mill: '枚', drinkFoe: '口', kanpai: '口' };
 const bonusText = (a: Ability, unit: Unit): string => (unit === 'count' ? `1 ${COUNT_WORD[a.action] ?? '枚'}ふえる` : `+${a.condN}`);
 const COND_TEXT: Record<CondKind, CondDef> = {
   none: { text: () => '' },

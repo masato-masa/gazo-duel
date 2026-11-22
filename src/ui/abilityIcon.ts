@@ -13,7 +13,7 @@ const BY_ACTION: Record<string, string> = {
   powerUp: up, extraSummon: up, revive: up,
   powerDown: down, halve: down, seal: down, skipDraw: down,
   draw: cards, discard: cards, mill: cards, swapHands: cards, steal: cards, gift: cards, returnCard: cards,
-  drinkFoe: beer,
+  drinkFoe: beer, kanpai: beer,
 };
 
 export const abilityIcon = (action: string | undefined): string => (action && BY_ACTION[action]) || wand;
