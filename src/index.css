@@ -1,5 +1,11 @@
 :root { color-scheme: dark; font-family: system-ui, 'Hiragino Sans', 'Yu Gothic', sans-serif; }
 * { box-sizing: border-box; }
 html, body, #root { margin: 0; height: 100%; }
-body { background: #1b1230; color: #f3ecff; -webkit-tap-highlight-color: transparent; }
+body {
+  background: #1b1230; color: #f3ecff; -webkit-tap-highlight-color: transparent;
+  /* 引っぱってのバウンド・ダブルタップ拡大・長押しの選択やメニューを止める */
+  overscroll-behavior: none; touch-action: manipulation;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+input, textarea { -webkit-user-select: text; user-select: text; }
 button { font: inherit; }
