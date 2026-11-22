@@ -132,7 +132,13 @@ export function sfx(kind: Sfx): void {
   }
 }
 
+/** 連打で鳴らしすぎない: 直前の振動から 60ms 以内の要求は捨てる。 */
+let lastBuzzAt = 0;
+
 export function buzz(ms: number): void {
+  const now = performance.now();
+  if (now - lastBuzzAt < 60) return;
+  lastBuzzAt = now;
   try {
     if (!muted) navigator.vibrate?.(ms);
   } catch {
