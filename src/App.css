@@ -273,3 +273,19 @@ button:disabled { opacity: .4; }
   .full { height: 136px; }
   .fart { height: 34px; }
 }
+
+/* 開始画面: 高さ 700px 以下（320×568・375×667）では説明文を畳み、選択を 3 列にして 1 画面に収める（押し先 44px は守る） */
+@media (max-height: 700px) {
+  .kinds { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; font-size: 14px; }
+  .kinds label { min-height: 44px; padding: 0 4px; }
+  .setup { padding: 10px 16px 12px; }
+  .setup h1 { font-size: 26px; margin-bottom: 0; }
+  .setup h1::after { margin-top: 4px; }
+  .setup .lead, .setup .note { display: none; }
+  .seat { padding: 10px; margin: 8px 0; }
+  .seat > input { min-height: 44px; }
+  .kinds { margin: 8px 0; }
+  .file { min-height: 48px; padding: 8px; }
+  button.big { padding: 12px; }
+  .ghostbtn { margin-top: 8px; padding: 10px; min-height: 44px; }
+}
