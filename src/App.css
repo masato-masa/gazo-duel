@@ -7,6 +7,7 @@
 .setup h1 { margin: 0 0 4px; font-size: 34px; letter-spacing: 3px; color: #ffd86b; text-shadow: 0 2px 0 #7a4a00, 0 0 18px #ffb40066; }
 .lead { margin: 0 0 8px; line-height: 1.55; }
 .note { font-size: 13px; opacity: .75; margin: 6px 0; line-height: 1.5; }
+.setup .note { text-align: center; }
 .seat { background: linear-gradient(160deg, #2e2052ee, #231640ee); border: 1px solid #6b53c4; border-radius: 16px; padding: 14px; margin: 10px 0; box-shadow: 0 6px 18px #0009, inset 0 1px 0 #ffffff1a; }
 .seat > input { width: 100%; min-height: 44px; box-sizing: border-box; font-size: 16px; padding: 8px 12px; border-radius: 8px; border: 0; background: #3b2c66; color: #fff; }
 .kinds { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin: 10px 0; font-size: 15px; font-weight: 700; }
@@ -20,6 +21,8 @@
 button.big { width: 100%; font-size: 18px; padding: 14px; border: 0; border-radius: 12px; background: linear-gradient(#ffc933, #ff9d00); color: #2a1a00; font-weight: 800; box-shadow: 0 4px 0 #a45f00; }
 button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #a45f00; }
 button:disabled { opacity: .4; }
+/* まだ押せない「はじめる」は金色をやめ、灰紫の面に明るい字で、足りないものを読ませる（GD-UI1） */
+button.big:disabled { opacity: 1; background: #3b2c66; color: #d8d0f4; box-shadow: none; }
 .loading { height: 100%; display: grid; place-content: center; text-align: center; gap: 12px; padding: 20px; }
 .spin { width: 48px; height: 48px; margin: 0 auto; border: 5px solid #4a3a80; border-top-color: #ffd86b; border-radius: 50%; animation: sp 1s linear infinite; }
 @keyframes sp { to { transform: rotate(360deg); } }
