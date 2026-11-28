@@ -53,7 +53,6 @@ function Setup({ onStart }: { onStart: (seats: [Seat, Seat]) => void }) {
     <div className="setup-bg">
     <div className="setup">
       <h1>ガゾデュエル</h1>
-      <p className="lead">画像 10 枚で変なカードを作って対戦</p>
       <p className="note">画像は端末の中だけで分析（初回のみ約 90MB）</p>
       {([0, 1] as const).map((i) => (
         <section key={i} className="seat">
